@@ -170,3 +170,23 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 
 See [Frontend Documentation](🚫link to your frontend readme here) for details on the fronend of our project.
 🚫 Add DS iOS and/or Andriod links here if applicable.
+
+
+# FIREBASE BACKEND
+
+## GET STARTED
+
+Log in to the Project Google Account
+
+Run these commands
+
+DO NOT USE YARN
+```
+npm install -g firebase-tools
+firebase login
+npm install
+```
+
+[To run functions locally, check this out.](https://firebase.google.com/docs/functions/local-emulator)
+
+[Watch this to familiarize yourself with Firebase Functions](https://www.youtube.com/playlist?list=PLl-K7zZEsYLkPZHe41m4jfAxUi0JjLgSM)
