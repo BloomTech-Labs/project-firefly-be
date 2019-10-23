@@ -7,16 +7,16 @@ const dotenv = require('dotenv');
 
 // setting up mongoose 
 mongoose.connect(
-	`mongodb+srv://projectfirefly:${process.env.PASSWORD}@project-firefly-qsjuq.mongodb.net/test?retryWrites=true&w=majority`)
+	process.env.URL,
 	{
 		useMongoClient: true
-	}
+	})
 // middleware instantiation
 server.use(express.json()); 
 server.use(helmet()); 
 server.use(cors({
 	origin: '*'
-}); 
+}));  
 
 
 
