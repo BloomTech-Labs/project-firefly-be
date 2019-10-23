@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
 });
 
 //Update existing user
-router.update('/:_id', (req, res) => {
+router.put('/:_id', (req, res) => {
   const { _id } = req.params;
   const changes = req.body;
 
