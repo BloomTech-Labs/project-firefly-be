@@ -24,6 +24,7 @@ router.post('/', (req, res) => {
     //add body structure here
     //first_name: req.body.first_name
     //last_name: req.body.last_name
+    //etc...
   });
 
   user.save()
@@ -32,7 +33,22 @@ router.post('/', (req, res) => {
 });
 
 //Update existing user
+router.update('/:_id', (req, res) => {
+  const { _id } = req.params;
+  const changes = req.body;
+
+  Users.findByIdAndUpdate(_id, changes)
+    .then(updatedUser => res.status(200).json(updatedUser))
+    .catch(err => res.status(500).json({ error: err }));
+})
 
 //Delete existing user
+router.delete('/:_id', (req, res) => {
+  const { _id } = req.params;
 
-module.exports = router
+  Users.findByIdandDelete(_id)
+    .then(deletedUser => res.status(200).json(deletedUser))
+    .catch(err => res.status(500).json({ error: err }));
+})
+
+module.exports = router;
