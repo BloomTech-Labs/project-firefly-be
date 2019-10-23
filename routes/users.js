@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 router.get('/:_id', (req, res) => {
   const { _id } = req.params;
 
-  Users.findById({ _id })
+  Users.findById(_id)
     .then(user => res.status(200).json(user))
     .catch(err => res.status(500).json({ error: err }));
 });
@@ -21,10 +21,21 @@ router.get('/:_id', (req, res) => {
 //Add new user
 router.post('/', (req, res) => {
   const user = new Users({
-    //add body structure here
-    //first_name: req.body.first_name
-    //last_name: req.body.last_name
-    //etc...
+    //body structure for created user
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    phone_number: req.body.phone_number,
+    academic_research: req.body.academic_research,
+    parent_age: req.body.parent_age,
+    marital_status: req.body.marital_status,
+    relation_to_child: req.body.relation_to_child,
+    education: req.body.education,
+    address: req.body.address,
+    city: req.body.city,
+    state: req.body.state,
+    country: req.body.country,
+    zip: req.body.zip
   });
 
   user.save()
@@ -40,7 +51,7 @@ router.update('/:_id', (req, res) => {
   Users.findByIdAndUpdate(_id, changes)
     .then(updatedUser => res.status(200).json(updatedUser))
     .catch(err => res.status(500).json({ error: err }));
-})
+});
 
 //Delete existing user
 router.delete('/:_id', (req, res) => {
@@ -49,6 +60,6 @@ router.delete('/:_id', (req, res) => {
   Users.findByIdandDelete(_id)
     .then(deletedUser => res.status(200).json(deletedUser))
     .catch(err => res.status(500).json({ error: err }));
-})
+});
 
 module.exports = router;
