@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet')
 const cors = require('cors')
-const stripe = require('stripe')("sk_test_VmtIYWhIS9KlMGmbGZJaHLQ100DftVxMiC")
 require('dotenv/config');
 
 const server = express();
