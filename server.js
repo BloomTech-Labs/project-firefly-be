@@ -9,7 +9,7 @@ const server = express();
 
 //import routes
 const usersRoute = require('./routes/users-routes');
-// const childrenRoute = require('./routes/children-routes');
+const childrenRoute = require('./routes/children-routes');
 const fireflyRoute = require('./routes/firefly-routes');
 
 // setting up mongoose 
@@ -24,7 +24,7 @@ server.use(cors({
 
 // route handling
 server.use('/users', usersRoute);
-// server.use('/children', childrenRoute);
+server.use('/children', childrenRoute);
 server.use('/fireflies', fireflyRoute);
 
 module.exports = server; 

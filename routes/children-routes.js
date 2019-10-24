@@ -1,6 +1,6 @@
 const router = require('express').Router(); 
 
-const Children = require('../models/children-routes.js'); 
+const Children = require('../models/children'); 
 
 // Get all children profiles
 router.get('/', (req, res) => {
@@ -13,17 +13,22 @@ router.get('/', (req, res) => {
 router.get('/:_id', (req, res) => {
     const { _id } = req.params; 
 
-    Users.findById({ _id })
+    Children.findById({ _id })
 	.then(child => res.status(200).json(child))
 	.catch(err => res.status(500).json(err))
 })
 
 // add new child profile 	
 router.post('/', (req, res) => {
-    const child = new Children({ })
+    const child = new Children({
+        parent_id: req.body.parent_id,
+        child_name: req.body.child_name,
+        child_age: req.body.child_age,
+        grade: req.body.grade
+    })
 
     child.save()
-	.then(newChild => res.status(201).json(newUser))
+	.then(newChild => res.status(201).json(newChild))
 	.catch(err => res.status(500).json(err)); 
 })
 
