@@ -73,7 +73,7 @@ router.delete('/:_id', (req, res) => {
   const { _id } = req.params;
 
   Firefly
-  .findByIdandDelete(_id)
+  .findByIdAndDelete(_id)
   .then(deadFly => {
     res.status(200).json(deadFly)
   })

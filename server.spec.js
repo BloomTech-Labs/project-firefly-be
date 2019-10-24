@@ -21,6 +21,8 @@ describe('server', () => {
     await connection.close();
   });
 
-
+  beforeAll(async () => { await db('users').truncate() })
+  beforeAll(async () => { await db('children').truncate() })
+  beforeAll(async () => { await db('fireflies').truncate() })
 
 });
