@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose'); 
 
 // creating schema for children collections
 const childrenSchema = mongoose.Schema({
