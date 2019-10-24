@@ -3,7 +3,7 @@ const router = require('express').Router();
 const server = express(); 
 const dotenv = require('dotenv');
 
-const usersRoute = require('./routes/users');
+const usersRoute = require('./routes/users-routes');
 
 // setting up mongoose 
 mongoose.connect(process.env.URL)
