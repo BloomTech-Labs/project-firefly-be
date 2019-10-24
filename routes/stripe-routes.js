@@ -101,7 +101,7 @@ router.post('/v1/subscriptions', (req, res) => {
                 plan: "gold", // items.plan is required!
             },
         ]
-    }, function(err, subscription) {
+    }, function(err, subscription) {const router = require('express').Router();
         // asynchronously called (I think this is where we do our status messages/error handling)
     })
 })
