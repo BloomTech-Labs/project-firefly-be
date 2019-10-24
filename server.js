@@ -7,13 +7,18 @@ require('dotenv/config');
 
 const server = express();
 
+//import routes
 const usersRoute = require('./routes/users-routes');
+const childrenRoute = require('./routes/children-routes');
+const fireflyRoute = require('./routes/firefly-routes');
 
 // setting up mongoose 
 mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
 
 // route handling
 server.use('/users', usersRoute);
+server.use('/children', childrenRoute);
+server.use('/fireflies', fireflyRoute);
 
 // middleware instantiation
 server.use(express.json()); 
