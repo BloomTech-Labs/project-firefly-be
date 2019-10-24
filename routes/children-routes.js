@@ -23,8 +23,8 @@ router.post('/', (req, res) => {
     const child = new Children({
         parent_id: req.body.parent_id,
         child_name: req.body.child_name,
-        child_age: req.body.child_age,
-        grade: req.body.grade
+        child_age: req.body.child_age || null,
+        grade: req.body.grade || null
     })
 
     child.save()
