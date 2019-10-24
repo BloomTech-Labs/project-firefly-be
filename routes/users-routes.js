@@ -57,7 +57,7 @@ router.put('/:_id', (req, res) => {
 router.delete('/:_id', (req, res) => {
   const { _id } = req.params;
 
-  Users.findByIdandDelete(_id)
+  Users.findByIdAndDelete(_id)
     .then(deletedUser => res.status(200).json(deletedUser))
     .catch(err => res.status(500).json({ error: err }));
 });
