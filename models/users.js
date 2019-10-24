@@ -1,10 +1,10 @@
 const mongoose = require('mongoose'); 
 
 const userSchema = mongoose.Schema({
-	first_name: String,
-	last_name: String,
-	email: String,
-	phone_number: String,
+	first_name: { type:String, required: true },
+	last_name: { type:String, required: true },
+	email: { type:String, required: true },
+	phone_number: { type:String, pattern: "^([0-9]{3}-[0-9]{3}-[0-9]{4}$", required: true },
 	academic_research: Boolean,
 	parent_age: Number,
 	marital_status: String,

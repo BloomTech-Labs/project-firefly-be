@@ -93,23 +93,35 @@ describe('server', () => {
           expect.objectContaining({first_name: 'Tina'})
         ]);
       })
+      //error checking with insert
+      it('fails to insert a field', async () => {
+        //Connect the collection 
+        const UserTbl = db.collection('Users');
+        //Create an array of objects and insert it
+        const Fail = {first: 12344}
+        await UserTbl.insertOne(Fail);
+
+        //check the result to make sure it wasn't inserted
+        const check = await UserTbl.findOne({first: 12344})
+        expect(check).toBe(undefined)
+      })
+
     })
 
     //Read the Items
     describe('get()', () => {      
-      it('returns 200', async () => {
+      it('gets all users information', async () => {
         const res = await request(server).get(`${users}`);
         // console.log('info', res)
         expect(res.status).toBe(200);
       });
       
-      it('returns a list', async () => {
+      it('grabs all users information for a specific key/value pair', async () => {
         const res = await request(server).get(`${users}`)
         expect(res.body.account).toHaveLength(3); 
       });
 
-      //get by id
-      it('should return 200', async () => {
+      it('grabs a user by id', async () => {
         const res = await request(server).get(`${users}/1`);
         expect(res.status).toBe(200);
       });
