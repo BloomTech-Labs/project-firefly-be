@@ -39,8 +39,8 @@ router.get('/:_id', (req, res) => {
 router.post('/', (req, res) => {
   const firefly = new Firefly({
     //Enter the fireflies name
-    firefly_name: req.body.firefly_name,
-    child_id: req.body.child_id
+    child_id: req.body.child_id,
+    firefly_name: req.body.firefly_name || null
   });
 
   firefly

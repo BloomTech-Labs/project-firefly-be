@@ -25,17 +25,17 @@ router.post('/', (req, res) => {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
-    phone_number: req.body.phone_number,
-    academic_research: req.body.academic_research,
-    parent_age: req.body.parent_age,
-    marital_status: req.body.marital_status,
-    relation_to_child: req.body.relation_to_child,
-    education: req.body.education,
-    address: req.body.address,
-    city: req.body.city,
-    state: req.body.state,
-    country: req.body.country,
-    zip: req.body.zip
+    phone_number: req.body.phone_number || null,
+    academic_research: req.body.academic_research || false,
+    parent_age: req.body.parent_age || null,
+    marital_status: req.body.marital_status || null,
+    relation_to_child: req.body.relation_to_child || null,
+    education: req.body.education || null,
+    address: req.body.address || null,
+    city: req.body.city || null,
+    state: req.body.state || null,
+    country: req.body.country || null,
+    zip: req.body.zip || null
   });
 
   user.save()
