@@ -16,13 +16,11 @@ describe('server', () => {
     connection = await MongoClient.connect(process.env.URL, {useNewUrlParser: true, useUnifiedTopology: true});
     db = await connection.db();
   });
+  //clean the database before running the test and disconnect when done with the testing
+  beforeAll(async () => { await db.collection('Users').deleteMany({}) });
+  beforeAll(async () => { await db.collection('Children').deleteMany({}) });
+  beforeAll(async () => { await db.collection('Fireflies').deleteMany({}) });
+  afterAll(async () => { await connection.close() });
 
-  afterAll(async () => {
-    await connection.close();
-  });
-
-  beforeAll(async () => { await db('users').truncate() })
-  beforeAll(async () => { await db('children').truncate() })
-  beforeAll(async () => { await db('fireflies').truncate() })
 
 });
