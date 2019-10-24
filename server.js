@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet')
 const cors = require('cors')
+const stripe = require('stripe'); 
 require('dotenv/config');
 
 const server = express();
@@ -13,7 +14,7 @@ const childrenRoute = require('./routes/children-routes');
 const fireflyRoute = require('./routes/firefly-routes');
 
 // setting up mongoose 
-mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true })
+mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
 
 // middleware instantiation
 server.use(express.json()); 
