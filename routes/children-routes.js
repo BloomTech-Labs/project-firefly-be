@@ -1,6 +1,7 @@
 const router = require('express').Router(); 
 
-const Children = require('../models/children'); 
+const Children = require('../models/children');
+const mw = require('../middleware/children-middleware')
 
 // Get all children profiles
 router.get('/', (req, res) => {
@@ -10,7 +11,7 @@ router.get('/', (req, res) => {
 })
 
 // get specific children 
-router.get('/:_id', (req, res) => {
+router.get('/:_id', mw.validateChildId, (req, res) => {
     const { _id } = req.params; 
 
     Children.findById({ _id })
@@ -19,7 +20,7 @@ router.get('/:_id', (req, res) => {
 })
 
 // add new child profile 	
-router.post('/', (req, res) => {
+router.post('/', mw.validateChildObj, mw.validateParentId, (req, res) => {
     const child = new Children({
         parent_id: req.body.parent_id,
         child_name: req.body.child_name,
@@ -33,7 +34,7 @@ router.post('/', (req, res) => {
 })
 
 // update existing child profile
-router.put('/:_id', (req, res) => {
+router.put('/:_id', mw.validateChildId, mw.validateChildObj, mw.validateParentId, (req, res) => {
     const { _id } = req.params; 
     const changes = req.body; 
 
@@ -43,7 +44,7 @@ router.put('/:_id', (req, res) => {
 })
 
 // delete existing child profile 
-router.delete('/:_id', (req, res) => {
+router.delete('/:_id', mw.validateChildId, (req, res) => {
     const { _id } = req.params; 
 
     Children.findByIdAndDelete(_id)
