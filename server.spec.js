@@ -98,11 +98,11 @@ describe('server', () => {
         //Connect the collection 
         const UserTbl = db.collection('Users');
         //Create an array of objects and insert it
-        const Fail = {first: 12344}
+        const Fail = {first_name: 12344}
         await UserTbl.insertOne(Fail);
 
         //check the result to make sure it wasn't inserted
-        const check = await UserTbl.findOne({first: 12344})
+        const check = await UserTbl.findOne({first_name: 12344})
         expect(check).toBe(undefined)
       })
 
