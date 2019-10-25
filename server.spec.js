@@ -1,11 +1,16 @@
-//Import Mongo Client for test use
+//Import Mongo Client and mongoose for test use
 const {MongoClient} = require('mongodb');
+const mongoose = require('mongoose')
 //Import server.js file
 const server = require('./server');
 
 describe('server', () => {
   let connection;
   let db;
+  const auth = '/auth'
+  const users = '/users'
+  const children = '/children'
+  const firefly = '/firefly'
 
   beforeAll(async () => {
     connection = await MongoClient.connect(process.env.URL, {useNewUrlParser: true, useUnifiedTopology: true});
