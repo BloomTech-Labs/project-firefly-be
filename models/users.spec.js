@@ -41,17 +41,33 @@ describe('User Model Test', () => {
 
   // Test Validation is working!!!
   // It should notify us of any errors in field types, or required fields
-  it('create user without required field should failed', async () => {
+  it('should not allow you to create a user without required field should failed', async () => {
     //Create an Object thats missing a required field  
     const incompleteUser = new Users({ email: 'goon@squad.com' });
     let err;
     try {
       const savedFail = await incompleteUser.save();
       error = savedFail;
-    } catch (error) {
+    } catch(error) {
       err = error
     }
+    //check that the error pops up properly
     expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
     expect(err.errors.password).toBeDefined();
-  });    
+  });
+
+  it('should not allow you to put the wrong field type in a required field', async () =>{
+    //Create an Object that has the wrong type of info in the field
+    const wrongUser = new Users({ email: 9999, password: 'youfeelme' });
+    let err;
+    try {
+      const savedError = await wrongUser.save();
+      error = savedError;
+    } catch(error) {
+      err = error
+    }
+    //check that the error pops up properly
+    expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
+    expect(err.errors.emai).toBeDefined();
+  })
 })
