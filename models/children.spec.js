@@ -57,7 +57,7 @@ describe('Children Model Test', () => {
 
   it('should not allow you to put the wrong field type in a required field', async () =>{
     //Create an Object that has the wrong type of info in the field
-    const wrongChild = new Users({ child_name: 9999, child_age: 9 });
+    const wrongChild = new Children({ child_name: 9999, child_age: '9' });
     let err;
     try {
       const savedError = await wrongChild.save();
@@ -65,8 +65,9 @@ describe('Children Model Test', () => {
     } catch(error) {
       err = error
     }
-    //check that the error pops up properly
+    //Check that the error pops up properly
+    //Number gets converted toa string and string presents a validation/cast type error 
     expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
-    expect(err.errors.child_name).toBeDefined();
+    expect(err.errors.child_age).toBeDefined();
   })
 })

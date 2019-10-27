@@ -1,6 +1,6 @@
 //import mongoose and the document being tested
 const mongoose = require('mongoose');
-const FireFly = require('./Flyren');
+const FireFly = require('./fireflies');
 //import the secrets
 require('dotenv').config()
 const flyData = { firefly_name: 'josh' };
@@ -56,17 +56,11 @@ describe('FireFly Model Test', () => {
   });    
 
   it('should not allow you to put the wrong field type in a required field', async () =>{
-    //Create an Object that has the wrong type of info in the field
-    const wrongFly = new Users({ firefly_name: 9999, Fly_age: 9 });
-    let err;
-    try {
-      const savedError = await wrongFly.save();
-      error = savedError;
-    } catch(error) {
-      err = error
-    }
-    //check that the error pops up properly
-    expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
-    expect(err.errors.firefly_name).toBeDefined();
+    //Create an Object that has the wrong type of info in the field and save it
+    const wrongFly = new FireFly({ firefly_name: 9999 });
+    const savedError = await wrongFly.save();
+
+    //The int should automatically convert to a string to correct the wrong input type
+    expect(savedError.firefly_name).toBe("9999")
   })
 })
