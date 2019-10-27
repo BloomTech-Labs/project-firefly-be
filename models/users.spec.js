@@ -56,7 +56,7 @@ describe('User Model Test', () => {
     expect(err.errors.password).toBeDefined();
   });
 
-  it('should not allow you to put the wrong field type in a', async () =>{
+  it('should not allow you to put the wrong field type in a required field', async () =>{
     //Create an Object that has the wrong type of info in the field
     const wrongUser = new Users({ email: 9999, password: 'youfeelme', parent_age: "twelve" });
     let err;
@@ -67,6 +67,7 @@ describe('User Model Test', () => {
       err = error
     }
     //check that the error pops up properly
+    //Number gets converted to a string and string presents a validation/cast type error 
     expect(err).toBeInstanceOf(mongoose.Error.ValidationError)
     expect(err.errors.parent_age).toBeDefined();
   })
