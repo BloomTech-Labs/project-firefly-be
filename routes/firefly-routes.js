@@ -62,8 +62,14 @@ router.put('/:_id', mw.validateFireflyId, mw.checkFireflyObj, mw.validateChildId
 
   Firefly
   .findByIdAndUpdate(_id, metamorphasis)
-  .then(change => {
-    res.status(200).json(change)
+  .then(ogFireflyObj => {
+    Firefly.findById(_id)
+    .then(change => {
+      res.status(200).json(change)
+    })
+    .catch(err => {
+      error(500, err, res);
+    });
   })
   .catch(err => {
     error(500, err, res);

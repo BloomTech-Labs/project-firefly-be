@@ -39,7 +39,11 @@ router.put('/:_id', mw.validateChildId, mw.checkChildObj, mw.validateParentId, (
     const changes = req.body; 
 
     Children.findByIdAndUpdate(_id, changes)
-	.then(updatedChild => res.status(200).json(updatedChild))
+    .then(ogChildObj => {
+        Children.findById(_id)
+            .then(updatedChild => res.status(200).json(updatedChild))
+            .catch(err => res.status(500).json(err))
+        })
 	.catch(err => res.status(500).json(err))
 })
 
