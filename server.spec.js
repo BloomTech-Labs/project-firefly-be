@@ -25,6 +25,11 @@ describe('server', () => {
   beforeAll(async () => { await db.collection('fireflies').deleteMany({}) });
   afterAll(async () => { await connection.close() });
 
+  //Check if the server.js file imported properly
+  it('checking the root point should return 200 OK', () => {
+    // we return the promise
+    expect(server).toBeDefined()
+  });
 
   //Set the order as post -> get -> put -> delete so that you don't have to use seed items you can go from a clean table
   // describe('auth route', () => {
@@ -99,69 +104,41 @@ describe('server', () => {
     })
 
     //Read the Items
-    describe('get()', () => {      
-      it('gets all users information', async () => {
+    describe('get()', () => {     
+      let testID = '';
+      it('gets users information', async () => {
         const res = await request(server).get(`${users}`);
         // console.log('info', res)
         expect(res.status).toBe(200);
       });
       
-      it('grabs all users information for a specific key/value pair', async () => {
-        const res = await request(server).get(`${users}`)
-        expect(res.body.account).toHaveLength(3); 
+      it('grabs all users information correctly', async () => {
+        const res = await request(server).get(`${users}`);
+        testID = res.body[0]._id
+        expect(res.body).toHaveLength(3); 
       });
 
       it('grabs a user by id', async () => {
-        const res = await request(server).get(`${users}/1`);
+        const res = await request(server).get(`${users}/${testID}`);
         expect(res.status).toBe(200);
       });
 
-      it('should return 404', async () => {
-        const res = await request(server).get(`${users}/7`);
+      it('should return 404, for nonexisting user', async () => {
+        const res = await request(server).get(`${users}/5db723217f5c0f9db7800700`);
         expect(res.status).toBe(404);
       });
-      
-      it('returns a single user', async () => {
-        const res = await request(server).get(`${users}/1`)
-        expect(res.body.account.first).toBe('taco'); 
-      });
-
-      //get by phone number
-      it('should return 200', async () => {
-        const res = await request(server).get(`${users}/search/num`).send({ phone:'000-999-8888' });
-        expect(res.status).toBe(200);
-      });
-
-      it('should return 404', async () => {
-        const res = await request(server).get(`${users}/search/num`).send({ phone:'pp' });
-        expect(res.status).toBe(404);
-      });
-      
-      it('returns a single user', async () => {
-        const res = await request(server).get(`${users}/search/num`).send({ phone:'000-999-8888' })
-        expect(res.body.account.last).toBe('tuesday'); 
-      });
-
-      //get name
-      it('should return', async () => {
-        const res = await request(server).get(`${users}/search/name`).send({ first:'taco' });
-        expect(res.status).toBe(200);
-      });
-
-      it('should return', async () => {
-        const res = await request(server).get(`${users}/search/name`).send({ last:'all' });
-        expect(res.status).toBe(404);
-      });
-      
-      it('returns a list', async () => {
-        const res = await request(server).get(`${users}/search/name`).send({ last:'tuesday' });
-        expect(res.body.account).toHaveLength(1); 
-      });
-    })
+    });
     //Update the Items
     describe('put()', () => {
-      it('should return 202', async () => {
-        const res = await request(server).put(`${users}/1`).send({ first: '3DS' }).expect(202);
+      //create a test ID to use for the rest of the test
+      let testID = ''
+      it('grab test info', async () =>{
+        const test = await request(server).get(`${users}`)
+        testID = test.body[0]._id
+      });
+
+      it('should return 202 and have the correct information', async () => {
+        const res = await request(server).put(`${users}/${testID}`).send({ marital_status: 'widow' }).expect(200);
         expect(res.body.account.first).toBe('3DS')
       });
       
