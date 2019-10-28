@@ -18,14 +18,6 @@ describe('server', () => {
   beforeAll(async () => {
     connection = await MongoClient.connect(process.env.URL, {useNewUrlParser: true, useUnifiedTopology: true});
     db = await connection.db();
-    //  //connect mongoose using the test server URL
-    //  await mongoose.connect(process.env.URL, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
-    //   //catch if an error occurs and exit the test process so it can be restarted, instead of an infinite check loop happening
-    //   if (err) {
-    //     console.error(err);
-    //     process.exit(1);
-    //   }
-    // });
   });
   //clean the database before running the test and disconnect when done with the testing
   beforeAll(async () => { await db.collection('Users').deleteMany({}) });
@@ -80,15 +72,12 @@ describe('server', () => {
     //Create the Items
     describe('post()', () => {
       it('should create a new user', async () => {
-        //Connect the collection 
-        const UserTbl = db.collection('Users');
         //Create an object and insert it
-        const User = {first_name: 'John', last_name: 'Doe', email: 'jd@unkown.com', phone_number: 4458987654, academic_research: false}
-        await UserTbl.insertOne(User);
-
+        const User = {email: 'jd@unknown.com', password: 'trippy', first_name: 'John', last_name: 'Doe',  phone_number: 4458987654, academic_research: false}
+      
         //Check if the user was inserted to the collection
-        const check = await UserTbl.findOne({first_name: 'John'})
-        expect(check).toEqual(User)
+        const res = await request(server).post(`${users}`).send(User);
+        expect(res.status).toEqual(202)
       })
       //simply to fill up the collection in order to test the following CRUD operations
       it('should create multiple users', async () => {
