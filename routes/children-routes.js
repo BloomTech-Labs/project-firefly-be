@@ -1,6 +1,7 @@
 const router = require('express').Router(); 
 
 const Children = require('../models/children');
+const Firefly = require('../models/fireflies')
 const mw = require('../middleware/children-middleware')
 
 // Get all children profiles
@@ -18,6 +19,22 @@ router.get('/:_id', mw.validateChildId, (req, res) => {
 	.then(child => res.status(200).json(child))
 	.catch(err => res.status(500).json(err))
 })
+
+//Get specific child with fireflies
+router.get('/:_id/fireflies', (req, res) => {
+    const { _id } = req.params;
+  
+    Children.findById(_id)
+    .then(child => {
+      Firefly.find({ child_id: _id }).select('-child_id -__v')
+      .then(fireflies => {
+        child._doc.fireflies = fireflies;
+        res.status(200).json(child);
+      })
+      .catch(err => res.status(500).json({ error: err }));
+    })
+    .catch(err => res.status(500).json({ error: err }));
+  });
 
 // add new child profile 	
 router.post('/', mw.checkChildObj, mw.validateParentId, (req, res) => {
