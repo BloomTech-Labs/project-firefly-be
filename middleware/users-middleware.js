@@ -21,10 +21,8 @@ function validateUserObj(req, res, next) {
   const user = req.body;
 
   if (!user) res.status(404).json({ error: "Missing user data." });
-  else if (!user.first_name) res.status(404).json({ error: "first_name is a required field." });
-  else if (!user.last_name) res.status(404).json({ error: "last_name is a required field." });
   else if (!user.email) res.status(404).json({ error: "email is a required field." });
-  else if (!user.phone_number) res.status(404).json({ error: "phone_number is a required field." });
+  else if (!user.password) res.status(404).json({ error: "password is a required field." });
 	else next();
 };
 
