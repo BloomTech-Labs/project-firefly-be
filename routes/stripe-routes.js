@@ -23,7 +23,7 @@ const mw = require('../middleware/stripe-middleware');
 // =============== Step 2 - Customer creation ================
 
 // monthly subscription creation
-router.post('/customer/sub-monthly', mw.validateStripeObj, (req, res) => {
+router.post('/customer/sub-monthly', mw.checkStripeObj, (req, res) => {
     const { stripeEmail, stripeToken } = req.body;
 
     stripe.customers.create({
@@ -55,7 +55,7 @@ router.post('/customer/sub-monthly', mw.validateStripeObj, (req, res) => {
 
 
 // yearly subscription creation
-router.post('/customer/sub-yearly', mw.validateStripeObj, (req, res) => {
+router.post('/customer/sub-yearly', mw.checkStripeObj, (req, res) => {
     const { stripeEmail, stripeToken } = req.body;
 
     stripe.customers.create({
@@ -116,7 +116,7 @@ router.get('/v1/subscriptions', (req, res) => {
 // ========================= POST requests ===========================
 
 // create a subscription
-router.post('/v1/subscriptions', mw.validateStripeCustomerId, (req, res) => {
+router.post('/v1/subscriptions', mw.checkStripeCustomerId, (req, res) => {
     const { id } = req.body; 
 
     stripe.subscriptions.create({
@@ -132,7 +132,7 @@ router.post('/v1/subscriptions', mw.validateStripeCustomerId, (req, res) => {
 })
 
 // create a new charge 
-router.post('/api/stripe', mw.validateStripeChargeObj, (req, res) => {
+router.post('/api/stripe', mw.checkStripeChargeObj, (req, res) => {
     const { stripeToken } = req.body; 
 
     stripe.charges.create({
@@ -155,7 +155,7 @@ router.post('/api/stripe', mw.validateStripeChargeObj, (req, res) => {
 // ======================== PUT requests ============================
 
 // update a subscription by user identifier 
-router.put('/v1/subscriptions/:id', mw.validateStripeOrderId, (req, res) => {
+router.put('/v1/subscriptions/:id', mw.checkStripeOrderId, (req, res) => {
     const { id } = req.params; 
     const { orderId } = req.body; 
 

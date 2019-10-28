@@ -20,7 +20,7 @@ router.get('/:_id', mw.validateUserId, (req, res) => {
 });
 
 //Add new user
-router.post('/', mw.validateUserObj, mw.validateUniqueEmail, (req, res) => {
+router.post('/', mw.checkUserObj, mw.validateUniqueEmail, (req, res) => {
   const user = new Users({
     //body structure for created user
     first_name: req.body.first_name || null,
@@ -45,7 +45,7 @@ router.post('/', mw.validateUserObj, mw.validateUniqueEmail, (req, res) => {
 });
 
 //Update existing user
-router.put('/:_id', mw.validateUserId, mw.validateUserObj, mw.validateUniqueEmail, (req, res) => {
+router.put('/:_id', mw.validateUserId, mw.checkUserObj, mw.validateUniqueEmail, (req, res) => {
   const { _id } = req.params;
   const changes = req.body;
 

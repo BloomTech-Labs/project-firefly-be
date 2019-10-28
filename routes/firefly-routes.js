@@ -37,7 +37,7 @@ router.get('/:_id', mw.validateFireflyId, (req, res) => {
 });
 
 //Post actions
-router.post('/', mw.validateFireflyObj, mw.validateChildId, (req, res) => {
+router.post('/', mw.checkFireflyObj, mw.validateChildId, (req, res) => {
   const firefly = new Firefly({
     //Enter the fireflies name
     child_id: req.body.child_id,
@@ -55,7 +55,7 @@ router.post('/', mw.validateFireflyObj, mw.validateChildId, (req, res) => {
 });
 
 //Put actions
-router.put('/:_id', mw.validateFireflyId, mw.validateFireflyObj, mw.validateChildId, (req, res) => {
+router.put('/:_id', mw.validateFireflyId, mw.checkFireflyObj, mw.validateChildId, (req, res) => {
   //Set an ID to check and grab changes from the body
   const { _id } = req.params;
   const metamorphasis = req.body;

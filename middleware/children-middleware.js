@@ -3,7 +3,7 @@ const Children = require("../models/children");
 
 module.exports = {
   validateChildId,
-  validateChildObj,
+  checkChildObj,
   validateParentId,
 };
 
@@ -18,7 +18,7 @@ function validateChildId(req, res, next) {
   .catch(err => res.status(500).json({ error: err }));
 };
 
-function validateChildObj(req, res, next) {
+function checkChildObj(req, res, next) {
   const child = req.body;
 
   if (!child) res.status(404).json({ error: "Missing child data." });

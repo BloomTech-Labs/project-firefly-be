@@ -2,7 +2,7 @@ const Users = require("../models/users");
 
 module.exports = {
   validateUserId,
-  validateUserObj,
+  checkUserObj,
   validateUniqueEmail,
 };
 
@@ -17,7 +17,7 @@ function validateUserId(req, res, next) {
   .catch(err => res.status(500).json({ error: err }));
 };
 
-function validateUserObj(req, res, next) {
+function checkUserObj(req, res, next) {
   const user = req.body;
 
   if (!user) res.status(404).json({ error: "Missing user data." });

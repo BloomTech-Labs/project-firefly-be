@@ -1,11 +1,11 @@
 module.exports = {
-  validateStripeObj,
-  validateStripeChargeObj,
-  validateStripeOrderId,
-  validateStripeCustomerId,
+  checkStripeObj,
+  checkStripeChargeObj,
+  checkStripeOrderId,
+  checkStripeCustomerId,
 };
 
-function validateStripeObj(req, res, next){
+function checkStripeObj(req, res, next){
   const stripeReqs = req.body;
 
   if (!stripeReqs) res.status(404).json({ error: "Missing required Stripe data." });
@@ -14,7 +14,7 @@ function validateStripeObj(req, res, next){
 	else next();
 };
 
-function validateStripeChargeObj(req, res, next){
+function checkStripeChargeObj(req, res, next){
   const stripeReqs = req.body;
 
   if (!stripeReqs) res.status(404).json({ error: "Missing required Stripe data." });
@@ -22,7 +22,7 @@ function validateStripeChargeObj(req, res, next){
 	else next();
 };
 
-function validateStripeOrderId(req, res, next){
+function checkStripeOrderId(req, res, next){
   const stripeReqs = req.body;
 
   if (!stripeReqs) res.status(404).json({ error: "Missing required Stripe data." });
@@ -30,7 +30,7 @@ function validateStripeOrderId(req, res, next){
 	else next();
 };
 
-function validateStripeCustomerId(req, res, next){
+function checkStripeCustomerId(req, res, next){
   const stripeReqs = req.body;
 
   if (!stripeReqs) res.status(404).json({ error: "Missing required Stripe data." });

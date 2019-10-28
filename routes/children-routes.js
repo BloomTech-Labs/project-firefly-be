@@ -20,7 +20,7 @@ router.get('/:_id', mw.validateChildId, (req, res) => {
 })
 
 // add new child profile 	
-router.post('/', mw.validateChildObj, mw.validateParentId, (req, res) => {
+router.post('/', mw.checkChildObj, mw.validateParentId, (req, res) => {
     const child = new Children({
         parent_id: req.body.parent_id,
         child_name: req.body.child_name,
@@ -34,7 +34,7 @@ router.post('/', mw.validateChildObj, mw.validateParentId, (req, res) => {
 })
 
 // update existing child profile
-router.put('/:_id', mw.validateChildId, mw.validateChildObj, mw.validateParentId, (req, res) => {
+router.put('/:_id', mw.validateChildId, mw.checkChildObj, mw.validateParentId, (req, res) => {
     const { _id } = req.params; 
     const changes = req.body; 
 

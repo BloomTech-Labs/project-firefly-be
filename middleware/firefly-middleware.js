@@ -3,7 +3,7 @@ const Children = require("../models/children");
 
 module.exports = {
   validateFireflyId,
-  validateFireflyObj,
+  checkFireflyObj,
   validateChildId,
 };
 
@@ -18,7 +18,7 @@ function validateFireflyId(req, res, next) {
   .catch(err => res.status(500).json({ error: err }));
 };
 
-function validateFireflyObj(req, res, next) {
+function checkFireflyObj(req, res, next) {
   const firefly = req.body;
 
   if (!firefly) res.status(404).json({ error: "Missing firefly data." });
