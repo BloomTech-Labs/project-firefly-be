@@ -51,7 +51,11 @@ router.put('/:_id', mw.validateUserId, mw.checkUserObj, mw.validateUniqueEmail, 
   const changes = req.body;
 
   Users.findByIdAndUpdate(_id, changes)
-  .then(updatedUser => res.status(202).json(updatedUser))
+  .then(ogUserObj => {
+    Users.findById(_id)
+      .then(updatedUser => res.status(202).json(updatedUser))
+      .catch(err => res.status(500).json({ error: err }))
+  })
   .catch(err => res.status(500).json({ error: err }));
 });
 
