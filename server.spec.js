@@ -1,6 +1,9 @@
-//Import Mongo Client and mongoose for test use
+//Import supertest, Mongo Client, and mongoose for test use
 const {MongoClient} = require('mongodb');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const request = require('supertest');
+//Import the secrets
+require('dotenv').config();
 //Import server.js file
 const server = require('./server');
 
@@ -15,6 +18,14 @@ describe('server', () => {
   beforeAll(async () => {
     connection = await MongoClient.connect(process.env.URL, {useNewUrlParser: true, useUnifiedTopology: true});
     db = await connection.db();
+    //  //connect mongoose using the test server URL
+    //  await mongoose.connect(process.env.URL, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
+    //   //catch if an error occurs and exit the test process so it can be restarted, instead of an infinite check loop happening
+    //   if (err) {
+    //     console.error(err);
+    //     process.exit(1);
+    //   }
+    // });
   });
   //clean the database before running the test and disconnect when done with the testing
   beforeAll(async () => { await db.collection('Users').deleteMany({}) });
