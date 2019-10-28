@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const bcrypt = require('bcryptjs');
 
 const Users = require('../models/users');
 const mw = require('../middleware/users-middleware')
@@ -21,12 +22,15 @@ router.get('/:_id', mw.validateUserId, (req, res) => {
 
 //Add new user
 router.post('/', mw.checkUserObj, mw.validateUniqueEmail, (req, res) => {
+  const { password } = req.body;
+  const hash = bcrypt.hashSync(password, 12)
+
   const user = new Users({
     //body structure for created user
     email: req.body.email,
-    password: req.body.password,
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
+    password: hash,
+    first_name: req.body.first_name || null,
+    last_name: req.body.last_name || null,
     phone_number: req.body.phone_number || null,
     academic_research: req.body.academic_research || false,
     parent_age: req.body.parent_age || null,
