@@ -20,9 +20,9 @@ describe('server', () => {
     db = await connection.db();
   });
   //clean the database before running the test and disconnect when done with the testing
-  beforeAll(async () => { await db.collection('Users').deleteMany({}) });
-  beforeAll(async () => { await db.collection('Children').deleteMany({}) });
-  beforeAll(async () => { await db.collection('Fireflies').deleteMany({}) });
+  beforeAll(async () => { await db.collection('users').deleteMany({}) });
+  beforeAll(async () => { await db.collection('children').deleteMany({}) });
+  beforeAll(async () => { await db.collection('fireflies').deleteMany({}) });
   afterAll(async () => { await connection.close() });
 
 
@@ -71,44 +71,29 @@ describe('server', () => {
   describe('user route', () => {  
     //Create the Items
     describe('post()', () => {
-      it('should create a new user', async () => {
-        //Create an object and insert it
-        const User = {email: 'jd@unknown.com', password: 'trippy', first_name: 'John', last_name: 'Doe',  phone_number: 4458987654, academic_research: false}
-      
+      it('should return fail 404 for missing info', async () => {
+        //Create an object
+        const User = {last_name: 'Doe',  phone_number: 4458987654, academic_research: false}
         //Check if the user was inserted to the collection
         const res = await request(server).post(`${users}`).send(User);
-        expect(res.status).toEqual(202)
+        expect(res.status).toEqual(404)
       })
       //simply to fill up the collection in order to test the following CRUD operations
-      it('should create multiple users', async () => {
-        //Connect the collection 
-        const UserTbl = db.collection('Users');
+      it('should return 201 for success', async () => {
         //Create an array of objects and insert it
-        const Users = [{first_name: 'Jane', last_name: 'Doe', email: 'jd2@unkown.com', phone_number: 4458987754, academic_research: true},
-        {first_name: 'Tony', last_name: 'Brick', email: 'tb@unkown.com', phone_number: 4458987854, academic_research: true},
-        {first_name: 'Tina', last_name: 'Brick', email: 'tb2@unkown.com', phone_number: 4458987954, academic_research: false}];
-        await UserTbl.insertMany(Users);
-
+        await request(server).post(`${users}`).send({password: 'tposss', first_name: 'Jane', last_name: 'Doe', email: 'jd2@unkown.com', phone_number: 4458987754, academic_research: true});
+        await request(server).post(`${users}`).send({password: 'tyosss', first_name: 'Tony', last_name: 'Brick', email: 'tb@unkown.com', phone_number: 4458987854, academic_research: true});
+        await request(server).post(`${users}`).send({password: 'typsss', first_name: 'Tina', last_name: 'Brick', email: 'tb2@unkown.com', phone_number: 4458987954, academic_research: false})
         //Check if the users were inserted to the collection
-        const check = await UserTbl.find().toArray();
-        expect(check).toEqual([
-          expect.objectContaining({first_name: 'John'}),
-          expect.objectContaining({first_name: 'Jane'}),
-          expect.objectContaining({first_name: 'Tony'}),
-          expect.objectContaining({first_name: 'Tina'})
-        ]);
+        .expect(201)
       })
       //error checking with insert
-      it('fails to insert a field', async () => {
-        //Connect the collection 
-        const UserTbl = db.collection('Users');
-        //Create an array of objects and insert it
-        const Fail = {first_name: 12344}
-        await UserTbl.insertOne(Fail);
-
-        //check the result to make sure it wasn't inserted
-        const check = await UserTbl.findOne({first_name: 12344})
-        expect(check).toBe(undefined)
+      it('fails with 422 due to a repeat of unique information', async () => {
+        //Create an object
+        const User = {password: 'typsss', first_name: 'Tina', last_name: 'Brick', email: 'tb2@unkown.com', phone_number: 4458987654, academic_research: false}
+        //Check if the user was inserted to the collection
+        const res = await request(server).post(`${users}`).send(User);
+        expect(res.status).toEqual(422)
       })
 
     })
