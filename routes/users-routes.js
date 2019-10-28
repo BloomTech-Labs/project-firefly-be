@@ -51,7 +51,7 @@ router.put('/:_id', mw.validateUserId, mw.checkUserObj, mw.validateUniqueEmail, 
   const changes = req.body;
 
   Users.findByIdAndUpdate(_id, changes)
-  .then(updatedUser => res.status(200).json(updatedUser))
+  .then(updatedUser => res.status(202).json(updatedUser))
   .catch(err => res.status(500).json({ error: err }));
 });
 

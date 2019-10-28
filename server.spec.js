@@ -108,42 +108,56 @@ describe('server', () => {
       let testID = '';
       it('gets users information', async () => {
         const res = await request(server).get(`${users}`);
-        // console.log('info', res)
+        //check the response grabbed the right info from the DB
         expect(res.status).toBe(200);
       });
       
       it('grabs all users information correctly', async () => {
         const res = await request(server).get(`${users}`);
+        //create a test ID for the get by ID test 
         testID = res.body[0]._id
+        //check that the number of objects created is equal to the number of objects received
         expect(res.body).toHaveLength(3); 
       });
 
+      //Get By ID
       it('grabs a user by id', async () => {
         const res = await request(server).get(`${users}/${testID}`);
+        //check that a user was grabbed using the test ID
         expect(res.status).toBe(200);
+        //check that the information received is correct 
+        expect(res.body.first_name).toBe('Jane')
       });
 
       it('should return 404, for nonexisting user', async () => {
+        //call the get request with a random ID string
         const res = await request(server).get(`${users}/5db723217f5c0f9db7800700`);
+        //check that the missing error is displayed
         expect(res.status).toBe(404);
       });
     });
+
     //Update the Items
     describe('put()', () => {
-      //create a test ID to use for the rest of the test
-      let testID = ''
+      //create a test ID, Password and Email to use for the rest of the test
       it('grab test info', async () =>{
+        //has to be done with async await to work properly so it has to be in a it call
         const test = await request(server).get(`${users}`)
         testID = test.body[0]._id
+        testEmail = test.body[0].email
+        testPass = test.body[0].password
       });
 
       it('should return 202 and have the correct information', async () => {
-        const res = await request(server).put(`${users}/${testID}`).send({ marital_status: 'widow' }).expect(200);
-        expect(res.body.account.first).toBe('3DS')
+        //pass in all the information and check that the returned status is 202 Accepted
+        const res = await request(server).put(`${users}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(202);
+        //check that the information received is actually correct
+        console.log(res.body)
+        expect(res.body.marital_status).toBe('widow')
       });
       
       it('return a 406', async () => {
-        const res = await request(server).put(`${users}/1`).send({ taco:'ll' });
+        const res = await request(server).put(`${users}/${testID}`).send({ email:'ll' });
         expect(res.status).toBe(406);
       });
 
