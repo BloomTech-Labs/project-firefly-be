@@ -8,6 +8,9 @@ if (process.env.NODE_ENV !== 'production') {
 // library imports
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+// middleware
+const mw = require('../middleware/stripe-middleware');
+
 /*
 =========3 STEPS TO STRIPE===========
 1. Create products and plans (this is done in the stripe dashboard)
@@ -20,7 +23,7 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // =============== Step 2 - Customer creation ================
 
 // monthly subscription creation
-router.post('/customer/sub-monthly', (req, res) => {
+router.post('/customer/sub-monthly', mw.validateStripeObj, (req, res) => {
     const { stripeEmail, stripeToken } = req.body;
 
     stripe.customers.create({
@@ -52,7 +55,7 @@ router.post('/customer/sub-monthly', (req, res) => {
 
 
 // yearly subscription creation
-router.post('/customer/sub-yearly', (req, res) => {
+router.post('/customer/sub-yearly', mw.validateStripeObj, (req, res) => {
     const { stripeEmail, stripeToken } = req.body;
 
     stripe.customers.create({
@@ -113,7 +116,7 @@ router.get('/v1/subscriptions', (req, res) => {
 // ========================= POST requests ===========================
 
 // create a subscription
-router.post('/v1/subscriptions', (req, res) => {
+router.post('/v1/subscriptions', mw.validateStripeCustomerId, (req, res) => {
     const { id } = req.body; 
 
     stripe.subscriptions.create({
@@ -129,7 +132,7 @@ router.post('/v1/subscriptions', (req, res) => {
 })
 
 // create a new charge 
-router.post('/api/stripe', (req, res) => {
+router.post('/api/stripe', mw.validateStripeChargeObj, (req, res) => {
     const { stripeToken } = req.body; 
 
     stripe.charges.create({
@@ -152,7 +155,7 @@ router.post('/api/stripe', (req, res) => {
 // ======================== PUT requests ============================
 
 // update a subscription by user identifier 
-router.put('/v1/subscriptions/:id', (req, res) => {
+router.put('/v1/subscriptions/:id', mw.validateStripeOrderId, (req, res) => {
     const { id } = req.params; 
     const { orderId } = req.body; 
 
