@@ -23,9 +23,10 @@ router.get('/:_id', mw.validateUserId, (req, res) => {
 router.post('/', mw.checkUserObj, mw.validateUniqueEmail, (req, res) => {
   const user = new Users({
     //body structure for created user
-    first_name: req.body.first_name || null,
-    last_name: req.body.last_name || null,
     email: req.body.email,
+    password: req.body.password,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
     phone_number: req.body.phone_number || null,
     academic_research: req.body.academic_research || false,
     parent_age: req.body.parent_age || null,
