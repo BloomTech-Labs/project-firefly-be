@@ -1,6 +1,5 @@
 //Import supertest, Mongo Client, and mongoose for test use
 const {MongoClient} = require('mongodb');
-const mongoose = require('mongoose');
 const request = require('supertest');
 //Import the secrets
 require('dotenv').config();
@@ -21,7 +20,7 @@ describe('server', () => {
   });
   //clean the database before running the test and disconnect when done with the testing
   beforeAll(async () => { await db.collection('users').deleteMany({}) });
-  beforeAll(async () => { await db.collection('children').deleteMany({}) });
+  beforeAll(async () => { await db.collection('childrens').deleteMany({}) });
   beforeAll(async () => { await db.collection('fireflies').deleteMany({}) });
   afterAll(async () => { await connection.close() });
 
@@ -30,6 +29,8 @@ describe('server', () => {
     // we return the promise
     expect(server).toBeDefined()
   });
+
+  //-------------------------- Auth Endpoints --------------------------
 
   //Set the order as post -> get -> put -> delete so that you don't have to use seed items you can go from a clean table
   // describe('auth route', () => {
@@ -71,6 +72,8 @@ describe('server', () => {
   //     });
   //   })
   // })
+  
+  //-------------------------- User Endpoints --------------------------
 
   //User Route CRUD Requests
   describe('user route', () => {  
@@ -182,6 +185,8 @@ describe('server', () => {
     })
   });
 
+  //-------------------------- Children Endpoints --------------------------
+
   //Children Route CRUD Requests
   describe('children route', () => {
     //Create a test ID for the "foreign key"
@@ -221,16 +226,14 @@ describe('server', () => {
 
     //Read the Items
     describe('get()', () => { 
-      it('gets users information', async () => {
+      it('gets children information', async () => {
         const res = await request(server).get(`${children}`);
         //Check the response grabbed the right info from the DB
         expect(res.status).toBe(200);
       });
       
-      it('grabs all users information correctly', async () => {
+      it('grabs all children information correctly', async () => {
         const res = await request(server).get(`${children}`);
-        //Create a test ID for the get by ID test 
-        testID = res.body[0]._id
         //Check that the number of objects created is equal to the number of objects received
         expect(res.body).toHaveLength(3); 
       });
@@ -239,7 +242,7 @@ describe('server', () => {
       it('grabs a user by id', async () => {
         const res = await request(server).get(`${children}/${testID}`);
         //Check that the information received is correct 
-        expect(res.body.first_name).toBe('Jane')
+        expect(res.body.child_name).toBe('Tak')
       });
 
       it('should return 404, for nonexisting user', async () => {
@@ -254,9 +257,9 @@ describe('server', () => {
     describe('put()', () => {
       it('should return 202 and have the correct information', async () => {
         //Pass in all the information and check that the returned status is 202 Accepted
-        const res = await request(server).put(`${children}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(202);
+        const res = await request(server).put(`${children}/${testID}`).send({ parent_id: `${testFK}`, child_name: 'Tak', child_age: 10 }).expect(202);
         //Check that the information received is actually correct
-        expect(res.body.marital_status).toBe('widow')
+        expect(res.body.child_age).toBe(10)
       });
       
       it('return a 406, unacceptable/missing information', async () => {
@@ -267,7 +270,7 @@ describe('server', () => {
 
       it('return a 404 missing id', async () => {
         //Send a update request with a broken ID 
-        const res = await request(server).put(`${children}/5db723217f5c0f9db7800700`).send({ email: 'nindie'});
+        const res = await request(server).put(`${children}/5db723217f5c0f9db7800700`).send({ child_name: 'anytime'});
         //Check to see that is give back a 404 error
         expect(res.status).toBe(404);
       });
@@ -277,7 +280,7 @@ describe('server', () => {
     describe('delete()', () => {
       it('should return 202', async () => {
         //Create a delete request and remove the first item in the database
-        const res = await request(server).delete(`${children}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(200);
+        const res = await request(server).delete(`${children}/${testID}`).send({ parent_id: `${testFK}`, child_name: 'Tak', child_age: 10 }).expect(200);
         //check that the first item now gone
         await request(server).get(`${children}/${testID}`).expect(404)
       });
@@ -288,6 +291,8 @@ describe('server', () => {
       });
     })
   })
+
+  //-------------------------- Firefly Endpoints --------------------------
 
   //Firefly Route CRUD Requests
   describe('firefly route', () => {
@@ -308,4 +313,6 @@ describe('server', () => {
       
     })
   })
+
+  //-------------------------- Connected Endpoints --------------------------
 });
