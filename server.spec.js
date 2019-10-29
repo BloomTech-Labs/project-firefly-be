@@ -103,6 +103,15 @@ describe('server', () => {
 
     })
 
+    //Create a test ID, Password and Email to use for the rest of the test
+    it('grab test info', async () =>{
+      //Has to be done with async await to work properly so it has to be in a it call
+      const test = await request(server).get(`${users}`)
+      testID = test.body[0]._id
+      testEmail = test.body[0].email
+      testPass = test.body[0].password
+    });
+
     //Read the Items
     describe('get()', () => { 
       it('gets users information', async () => {
@@ -113,8 +122,6 @@ describe('server', () => {
       
       it('grabs all users information correctly', async () => {
         const res = await request(server).get(`${users}`);
-        //Create a test ID for the get by ID test 
-        testID = res.body[0]._id
         //Check that the number of objects created is equal to the number of objects received
         expect(res.body).toHaveLength(3); 
       });
@@ -138,15 +145,6 @@ describe('server', () => {
 
     //Update the Items
     describe('put()', () => {
-      //Create a test ID, Password and Email to use for the rest of the test
-      it('grab test info', async () =>{
-        //Has to be done with async await to work properly so it has to be in a it call
-        const test = await request(server).get(`${users}`)
-        testID = test.body[0]._id
-        testEmail = test.body[0].email
-        testPass = test.body[0].password
-      });
-
       it('should return 202 and have the correct information', async () => {
         //Pass in all the information and check that the returned status is 202 Accepted
         const res = await request(server).put(`${users}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(202);
@@ -170,15 +168,6 @@ describe('server', () => {
 
     //Delete the Items
     describe('delete()', () => {
-      //create a test ID, Password and Email to use for the rest of the test
-      it('grab test info', async () =>{
-        //has to be done with async await to work properly so it has to be in a it call
-        const test = await request(server).get(`${users}`)
-        testID = test.body[0]._id
-        testEmail = test.body[0].email
-        testPass = test.body[0].password
-      });
-
       it('should return 202', async () => {
         //Create a delete request and remove the first item in the database
         const res = await request(server).delete(`${users}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(200);
@@ -195,21 +184,108 @@ describe('server', () => {
 
   //Children Route CRUD Requests
   describe('children route', () => {
-    //Create Items
+    //Create a test ID for the "foreign key"
+    it('should receive a parent ID', async () => {
+      const res = await request(server).get(`${users}`);
+      testFK = res.body[0]._id;
+    })
+
+    //Create the Items
     describe('post()', () => {
-    
+      it('should return fail 406 for missing info', async () => {
+        //Create an object
+        const Child = {parent_id: `${testFK}` ,child_age: 9}
+        //Check if the child was inserted to the collection
+        const res = await request(server).post(`${children}`).send(Child);
+        expect(res.status).toEqual(406)
+      })
+
+      //Simply to fill up the collection in order to test the following CRUD operations
+      it('should return 201 for success', async () => {
+        //Create an array of objects and insert it
+        await request(server).post(`${children}`).send({parent_id: `${testFK}`,child_name: 'Tak', child_age: 4});
+        await request(server).post(`${children}`).send({parent_id: `${testFK}`,child_name: 'Kindra', child_age: 5});
+        await request(server).post(`${children}`).send({parent_id: `${testFK}`,child_name: 'Claude', child_age: 3})
+        //Check if the children were inserted to the collection
+        .expect(201)
+      })
     })
+
+    //Create a test ID, Password and Email to use for the rest of the test
+    it('grab test info', async () =>{
+      //Has to be done with async await to work properly so it has to be in a it call
+      const test = await request(server).get(`${children}`)
+      testID = test.body[0]._id
+      testAge = test.body[0].child_name
+    });
+
     //Read the Items
-    describe('get()', () => {      
+    describe('get()', () => { 
+      it('gets users information', async () => {
+        const res = await request(server).get(`${children}`);
+        //Check the response grabbed the right info from the DB
+        expect(res.status).toBe(200);
+      });
       
-    })
+      it('grabs all users information correctly', async () => {
+        const res = await request(server).get(`${children}`);
+        //Create a test ID for the get by ID test 
+        testID = res.body[0]._id
+        //Check that the number of objects created is equal to the number of objects received
+        expect(res.body).toHaveLength(3); 
+      });
+
+      //Get By ID
+      it('grabs a user by id', async () => {
+        const res = await request(server).get(`${children}/${testID}`);
+        //Check that the information received is correct 
+        expect(res.body.first_name).toBe('Jane')
+      });
+
+      it('should return 404, for nonexisting user', async () => {
+        //Call the get request with a random ID string
+        const res = await request(server).get(`${children}/5db723217f5c0f9db7800700`);
+        //Check that the missing error is displayed
+        expect(res.status).toBe(404);
+      });
+    });
+
     //Update the Items
     describe('put()', () => {
+      it('should return 202 and have the correct information', async () => {
+        //Pass in all the information and check that the returned status is 202 Accepted
+        const res = await request(server).put(`${children}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(202);
+        //Check that the information received is actually correct
+        expect(res.body.marital_status).toBe('widow')
+      });
       
+      it('return a 406, unacceptable/missing information', async () => {
+        const res = await request(server).put(`${children}/${testID}`).send(null);
+        //Change when the middleware is update
+        expect(res.status).toBe(406);
+      });
+
+      it('return a 404 missing id', async () => {
+        //Send a update request with a broken ID 
+        const res = await request(server).put(`${children}/5db723217f5c0f9db7800700`).send({ email: 'nindie'});
+        //Check to see that is give back a 404 error
+        expect(res.status).toBe(404);
+      });
     })
+
     //Delete the Items
     describe('delete()', () => {
-      
+      it('should return 202', async () => {
+        //Create a delete request and remove the first item in the database
+        const res = await request(server).delete(`${children}/${testID}`).send({ email: `${testEmail}`, password: `${testPass}`, marital_status: 'widow' }).expect(200);
+        //check that the first item now gone
+        await request(server).get(`${children}/${testID}`).expect(404)
+      });
+
+      it('return a 404 missing id', async () => {
+        const res = await request(server).delete(`${children}/5db723217f5c0f9db7800700`);
+        expect(res.status).toBe(404);
+      });
     })
   })
 
