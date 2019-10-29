@@ -21,9 +21,9 @@ function validateChildId(req, res, next) {
 function checkChildObj(req, res, next) {
   const child = req.body;
 
-  if (!child) res.status(404).json({ error: "Missing child data." });
-  else if (!child.parent_id) res.status(404).json({ error: "parent_id is a required field." });
-  else if (!child.child_name) res.status(404).json({ error: "child_name is a required field." });
+  if (!child) res.status(406).json({ error: "Missing child data." });
+  else if (!child.parent_id) res.status(406).json({ error: "parent_id is a required field." });
+  else if (!child.child_name) res.status(406).json({ error: "child_name is a required field." });
 	else next();
 };
 

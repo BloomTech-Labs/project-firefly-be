@@ -1,7 +1,8 @@
 const router = require('express').Router();
 
 const Users = require('../models/users');
-const mw = require('../middleware/users-middleware')
+const Children = require('../models/children');
+const mw = require('../middleware/users-middleware');
 
 //Get ALL users
 router.get('/', (req, res) => {
@@ -16,6 +17,22 @@ router.get('/:_id', mw.validateUserId, (req, res) => {
 
   Users.findById(_id)
   .then(user => res.status(200).json(user))
+  .catch(err => res.status(500).json({ error: err }));
+});
+
+//Get specific user with children
+router.get('/:_id/children', (req, res) => {
+  const { _id } = req.params;
+
+  Users.findById(_id)
+  .then(user => {
+    Children.find({ parent_id: _id }).select('-parent_id -__v')
+    .then(children => {
+      user._doc.children = children;
+      res.status(200).json(user);
+    })
+    .catch(err => res.status(500).json({ error: err }));
+  })
   .catch(err => res.status(500).json({ error: err }));
 });
 
@@ -51,7 +68,11 @@ router.put('/:_id', mw.validateUserId, mw.checkUserObj, mw.validateUniqueEmail, 
   const changes = req.body;
 
   Users.findByIdAndUpdate(_id, changes)
-  .then(updatedUser => res.status(200).json(updatedUser))
+  .then(ogUserObj => {
+    Users.findById(_id)
+      .then(updatedUser => res.status(202).json(updatedUser))
+      .catch(err => res.status(500).json({ error: err }))
+  })
   .catch(err => res.status(500).json({ error: err }));
 });
 
