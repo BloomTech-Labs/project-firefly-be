@@ -21,9 +21,9 @@ function validateFireflyId(req, res, next) {
 function checkFireflyObj(req, res, next) {
   const firefly = req.body;
 
-  if (!firefly) res.status(404).json({ error: "Missing firefly data." });
-  else if (!firefly.child_id) res.status(404).json({ error: "child_id is a required field." });
-  else if (!firefly.firefly_name) res.status(404).json({ error: "firefly_name is a required field." });
+  if (!firefly) res.status(406).json({ error: "Missing firefly data." });
+  else if (!firefly.child_id) res.status(406).json({ error: "child_id is a required field." });
+  else if (!firefly.firefly_name) res.status(406).json({ error: "firefly_name is a required field." });
 	else next();
 };
 
