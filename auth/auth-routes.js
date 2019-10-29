@@ -39,7 +39,7 @@ server.post('/login', (req, res) => {
   .then(user => {
     //if the password matches after going through the hash continue
     if (user && bcrypt.compareSync(password, user.password)) {
-      req.session.name = user.email
+      req.session.user = user
       //creating the session name <-- cookie injection :)
       res.status(200).json( 'Welcome' );
     }
