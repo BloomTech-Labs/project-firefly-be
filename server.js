@@ -1,5 +1,6 @@
 // library imports
 const express = require('express');
+const session = require('cookie-session');
 const mongoose = require('mongoose');
 const helmet = require('helmet')
 const cors = require('cors')
@@ -16,8 +17,27 @@ const stripeRoute = require('./routes/stripe-routes');
 // setting up mongoose 
 mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
 
+// setup session configurations
+const sessionConfig ={
+  name: 'Question', //keep em guessing
+  secret: process.env.SECRET, // the magical words
+  cookie: {
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    //httpOnly prevents any type of non server side access, like someone injecting a script
+    httpOnly: true,
+    //sends a duplicate of the key with an encrypted value to reference to check and make sure the key has not been tampered with since being sent/created
+    signed: true,
+    //if a new key is made with the same name/value as a current one it will simply replace it
+    overwrite: true
+  },
+  resave: false, //do not recreate the sessions, if all else constant, resign-in should still be done
+  saveUninitialized: false, //has to be dynamic, should only be true if the user has accepted the terms of using the cookies
+}
+
 // middleware instantiation
 server.use(express.json()); 
+server.use(session(sessionConfig))
 server.use(helmet()); 
 server.use(cors({
 	origin: '*'
