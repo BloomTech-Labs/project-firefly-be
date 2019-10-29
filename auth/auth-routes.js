@@ -34,21 +34,21 @@ server.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   Users
-  //query to search for a user where the emails match
+  //Query to search for a user where the emails match
   .find({ email: email })
   .then(user => {
-    //if the password matches after going through the hash continue
+    //If the password matches after going through the hash continue
     if (user && bcrypt.compareSync(password, user.password)) {
       req.session.user = user
-      //creating the session name <-- cookie injection :)
+      //Creating the session name <-- cookie injection :)
       res.status(200).json( 'Welcome' );
     }
     else {
-      res.status(401).json({ message: 'Wrong Information' })
+      error( 'Wrong Information', 401, res )
     }
   })
   .catch( err => {
-    res.status(500).json( err )
+    error( err, 500, res)
   })
 })
 
