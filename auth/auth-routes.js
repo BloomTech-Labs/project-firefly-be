@@ -1,56 +1,76 @@
-//import express and cookies
-var cookieSession = require('cookie-session')
-var express = require('express')
+//Start a router and import bcrypt
+const router = require('express').Router();
+const bcrypt = require('bcryptjs') //bcryptjs is better for us to use because it is available in more places than bcrypt which is native to C++
 
-//import assert for checking and keygrip for key generation/handling
-var assert = require('assert')
-var Keygrip = require('keygrip'), keylist, keys, hash, index
+//Import database
+const Users = require('../models/users')
 
-//establish a name for usage throughout
-var app = express()
+//Set error msgs
+const error = (msg, sts, res) => {
+  res.status(sts).json({ error: `${msg}`});
+};
 
-//set the keys
-keylist = ["SEKRIT3", "SEKRIT2", "SEKRIT1"]
-keys = Keygrip(keylist)
+//CRUD Requests
+//Register 
+server.post('/register', ( req, res ) => {
+  // Grab the users information from the body
+  let user = req.body;
+  // Encrypt the password with a hash and set the user's password to the hash
+  const hash = bcrypt.hashSync(user.password, 12);
+  user.password = hash;
+  //Call the collection and save the new user's information with the password swapped for the hash
+  Users
+  .save(user)
+  .then(saved => {
+    res.status(201).json(saved);
+  })
+  .catch( err => {
+    error( err, 500, res );
+  })
+})
 
-// .sign returns the hash for the first key
-hash = keys.sign("bieberschnitzel")
-assert.ok(/^[\w\-]{27}$/.test(hash))
- 
-// .index returns the index of the first matching key
-index = keys.index("bieberschnitzel", hash)
-assert.equal(index, 0)
- 
-// .verify returns the a boolean indicating a matched key
-matched = keys.verify("bieberschnitzel", hash)
-assert.ok(matched)
- 
-// .index returns -1 if no item in the array matches
-index = keys.index("bieberschnitzel", "o_O")
-assert.equal(index, -1)
- 
-// rotate a new key in, and an old key out
-keylist.unshift("SEKRIT4")
-keylist.pop()
- 
-// if index > 0, it's time to re-sign
-index = keys.index("bieberschnitzel", hash)
-assert.equal(index, 1)
-hash = keys.sign("bieberschnitzel")
+//Login
+server.post('/login', (req, res) => {
+  const { email, password } = req.body;
 
-app.use(cookieSession({
-  name: 'loggedIN',
-  keys: [/* secret keys */],
-  
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  //httpOnly prevents any type of non server side access, like someone injecting a script
-  httpOnly: true,
-  //sends a duplicate of the key with an encrypted value to reference to check and make sure the key has not been tampered with since being sent/created
-  signed: true,
-  //if a new key is made with the same name/value as a current one it will simply replace it
-  overwrite: true,
+  Users
+  //query to search for a user where the emails match
+  .find({ email: email })
+  .then(user => {
+    //if the password matches after going through the hash continue
+    if (user && bcrypt.compareSync(password, user.password)) {
+      req.session.name = user.email
+      //creating the session name <-- cookie injection :)
+      res.status(200).json( 'Welcome' );
+    }
+    else {
+      res.status(401).json({ message: 'Wrong Information' })
+    }
+  })
+  .catch( err => {
+    res.status(500).json( err )
+  })
+})
 
-}))
+//Logout
+router.get('/logout', (req, res) => {
+  //Check for a current session in progress and then end it with a destroy method
+  if(req.session) { 
+    req.session.destroy( err => {
+      //If the logout fails to occur, send a message notifying the user to reattempt
+      if(err) { 
+        res.send('Sumimasen, Chotto Matte!')
+      }
+      //Otherwise notify the user that they have been successfully logged out
+      else {
+        res.send('Otsukare Sama Desu!')
+      }
+    })
+  }
+  //If a session doesn't exist notify the user to login
+  else {
+    res.send('Gomen!*Smoke Bomb*') 
+  }
+})
 
-module.exports = app;
+module.exports = router;
