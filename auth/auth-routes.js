@@ -34,10 +34,10 @@ router.post('/register', ( req, res ) => {
 //Login
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
-
+  
   Users
   //Query to search for a user where the emails match
-  .find({ email: email })
+  .findOne({ email: email })
   .then(user => {
     //If the password matches after going through the hash continue
     if (user && bcrypt.compareSync(password, user.password)) {
