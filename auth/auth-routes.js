@@ -58,16 +58,20 @@ router.post('/login', (req, res) => {
 router.get('/logout', (req, res) => {
   //Check for a current session in progress and then end it with a destroy method
   if(req.session) { 
-    req.session.destroy( err => {
-      //If the logout fails to occur, send a message notifying the user to reattempt
-      if(err) { 
-        res.send('Sumimasen, Chotto Matte!')
-      }
-      //Otherwise notify the user that they have been successfully logged out
-      else {
-        res.send('Otsukare Sama Desu!')
-      }
-    })
+    //Destroy session by setting it to null
+    req.session = null
+    //End the response to close
+    res.send('Otsukare Sama Desu!')
+    // req.session.destroy( err => {
+    //   //If the logout fails to occur, send a message notifying the user to reattempt
+    //   if(err) { 
+    //     res.send('Sumimasen, Chotto Matte!')
+    //   }
+    //   //Otherwise notify the user that they have been successfully logged out
+    //   else {
+    //     res.send('Otsukare Sama Desu!')
+    //   }
+    // })
   }
   //If a session doesn't exist notify the user to login
   else {
