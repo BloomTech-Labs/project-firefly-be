@@ -12,15 +12,17 @@ const error = (msg, sts, res) => {
 
 //CRUD Requests
 //Register 
-server.post('/register', ( req, res ) => {
+router.post('/register', ( req, res ) => {
   // Grab the users information from the body
   let user = req.body;
   // Encrypt the password with a hash and set the user's password to the hash
   const hash = bcrypt.hashSync(user.password, 12);
   user.password = hash;
   //Call the collection and save the new user's information with the password swapped for the hash
-  Users
-  .save(user)
+  const newUser = new Users(user)
+
+  newUser
+  .save()
   .then(saved => {
     res.status(201).json(saved);
   })
@@ -30,7 +32,7 @@ server.post('/register', ( req, res ) => {
 })
 
 //Login
-server.post('/login', (req, res) => {
+router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   Users
