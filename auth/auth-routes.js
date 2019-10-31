@@ -5,6 +5,9 @@ const bcrypt = require('bcryptjs') //bcryptjs is better for us to use because it
 //Import database
 const Users = require('../models/users')
 
+//Import middleware
+const mw = require('../middleware/users-middleware')
+
 //Set error msgs
 const error = (msg, sts, res) => {
   res.status(sts).json({ error: `${msg}`});
@@ -12,7 +15,7 @@ const error = (msg, sts, res) => {
 
 //CRUD Requests
 //Register 
-router.post('/register', ( req, res ) => {
+router.post('/register', mw.checkUserObj, mw.validateUniqueEmail, ( req, res ) => {
   // Grab the users information from the body
   let user = req.body;
   // Encrypt the password with a hash and set the user's password to the hash
@@ -32,7 +35,7 @@ router.post('/register', ( req, res ) => {
 })
 
 //Login
-router.post('/login', (req, res) => {
+router.post('/login', mw.checkUserObj, (req, res) => {
   const { email, password } = req.body;
   
   Users
