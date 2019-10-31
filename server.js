@@ -13,6 +13,7 @@ const usersRoute = require('./routes/users-routes');
 const childrenRoute = require('./routes/children-routes');
 const fireflyRoute = require('./routes/firefly-routes');
 const stripeRoute = require('./routes/stripe-routes');
+const authRoute = require('./auth/auth-routes');
 
 // setting up mongoose 
 mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
@@ -37,7 +38,7 @@ const sessionConfig ={
 
 // middleware instantiation
 server.use(express.json()); 
-server.use(session(sessionConfig))
+server.use(session(sessionConfig));
 server.use(helmet()); 
 server.use(cors({
 	origin: '*'
@@ -47,7 +48,8 @@ server.use(cors({
 server.use('/users', usersRoute);
 server.use('/children', childrenRoute);
 server.use('/fireflies', fireflyRoute);
-server.use('/stripe', stripeRoute)
+server.use('/stripe', stripeRoute);
+server.use('/auth', authRoute);
 
 
 module.exports = server; 

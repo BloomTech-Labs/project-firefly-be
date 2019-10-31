@@ -63,7 +63,7 @@ router.post('/', mw.checkUserObj, mw.validateUniqueEmail, (req, res) => {
 });
 
 //Update existing user
-router.put('/:_id', mw.validateUserId, mw.checkUserObj, mw.validateUniqueEmail, (req, res) => {
+router.put('/:_id', mw.validateUserId, mw.validateUniqueEmail, (req, res) => {
   const { _id } = req.params;
   const changes = req.body;
 

@@ -5,6 +5,9 @@ const bcrypt = require('bcryptjs') //bcryptjs is better for us to use because it
 //Import database
 const Users = require('../models/users')
 
+//Import middleware
+const mw = require('../middleware/users-middleware')
+
 //Set error msgs
 const error = (msg, sts, res) => {
   res.status(sts).json({ error: `${msg}`});
@@ -12,15 +15,17 @@ const error = (msg, sts, res) => {
 
 //CRUD Requests
 //Register 
-server.post('/register', ( req, res ) => {
+router.post('/register', mw.checkUserObj, mw.validateUniqueEmail, ( req, res ) => {
   // Grab the users information from the body
   let user = req.body;
   // Encrypt the password with a hash and set the user's password to the hash
   const hash = bcrypt.hashSync(user.password, 12);
   user.password = hash;
   //Call the collection and save the new user's information with the password swapped for the hash
-  Users
-  .save(user)
+  const newUser = new Users(user)
+
+  newUser
+  .save()
   .then(saved => {
     res.status(201).json(saved);
   })
@@ -30,12 +35,12 @@ server.post('/register', ( req, res ) => {
 })
 
 //Login
-server.post('/login', (req, res) => {
+router.post('/login', mw.checkUserObj, (req, res) => {
   const { email, password } = req.body;
-
+  
   Users
   //Query to search for a user where the emails match
-  .find({ email: email })
+  .findOne({ email: email })
   .then(user => {
     //If the password matches after going through the hash continue
     if (user && bcrypt.compareSync(password, user.password)) {
@@ -56,16 +61,20 @@ server.post('/login', (req, res) => {
 router.get('/logout', (req, res) => {
   //Check for a current session in progress and then end it with a destroy method
   if(req.session) { 
-    req.session.destroy( err => {
-      //If the logout fails to occur, send a message notifying the user to reattempt
-      if(err) { 
-        res.send('Sumimasen, Chotto Matte!')
-      }
-      //Otherwise notify the user that they have been successfully logged out
-      else {
-        res.send('Otsukare Sama Desu!')
-      }
-    })
+    //Destroy session by setting it to null
+    req.session = null
+    //End the response to close
+    res.send('Otsukare Sama Desu!')
+    // req.session.destroy( err => {
+    //   //If the logout fails to occur, send a message notifying the user to reattempt
+    //   if(err) { 
+    //     res.send('Sumimasen, Chotto Matte!')
+    //   }
+    //   //Otherwise notify the user that they have been successfully logged out
+    //   else {
+    //     res.send('Otsukare Sama Desu!')
+    //   }
+    // })
   }
   //If a session doesn't exist notify the user to login
   else {
