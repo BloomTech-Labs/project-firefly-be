@@ -2,6 +2,8 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs')
 const generator = require('generate-password')
 
+const mw = require('./firebase-middleware')
+
 const Users = require('../models/users')
 
 // config file for password generation; defaulted false values flipped to true
@@ -13,7 +15,7 @@ const passConfig = {
 
 // Google routes
 // Create a new account via Google
-router.post('/google/register', (req, res) => {
+router.post('/google/register', mw.decodeFirebaseIdToken, (req, res) => {
   const user = new Users({
     //body structure for created user
     email: req.body.email,
@@ -41,7 +43,7 @@ router.post('/google/register', (req, res) => {
 });
 
 // Login via Google
-router.post('/google/login', (req, res) => {
+router.post('/google/login', mw.decodeFirebaseIdToken, (req, res) => {
   const { email } = req.body;
 
   Users
@@ -57,7 +59,7 @@ router.post('/google/login', (req, res) => {
 
 // Facebook routes
 // Create a new account via Facebook
-router.post('/facebook/register', (req, res) => {
+router.post('/facebook/register', mw.decodeFirebaseIdToken, (req, res) => {
   const user = new Users({
     //body structure for created user
     email: req.body.email,
@@ -85,7 +87,7 @@ router.post('/facebook/register', (req, res) => {
 })
 
 // Login via Facebook
-router.post('/facebook/login', (req, res) => {
+router.post('/facebook/login', mw.decodeFirebaseIdToken, (req, res) => {
   const { email } = req.body;
 
   Users
