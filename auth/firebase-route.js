@@ -15,10 +15,10 @@ const passConfig = {
 
 // Google routes
 // Create a new account via Google
-router.post('/google/register', mw.decodeFirebaseIdToken, (req, res) => {
+router.get('/google/register', mw.decodeFirebaseIdToken, mw.validateOpenAccount, (req, res) => {
   const user = new Users({
     //body structure for created user
-    email: req.body.email,
+    email: res.locals.user.email,
     //password is automatically generated to fulfill model requirements
     //neither the developer or user knows the password as authentication will occur via token verification
     password: bcrypt.hashSync(generator.generate(passConfig), 12),
@@ -43,8 +43,8 @@ router.post('/google/register', mw.decodeFirebaseIdToken, (req, res) => {
 });
 
 // Login via Google
-router.post('/google/login', mw.decodeFirebaseIdToken, (req, res) => {
-  const { email } = req.body;
+router.get('/google/login', mw.decodeFirebaseIdToken, mw.validateExistingAccount, (req, res) => {
+  const { email } = res.locals.user;
 
   Users
   //Query to search for a user where the emails match
@@ -59,10 +59,10 @@ router.post('/google/login', mw.decodeFirebaseIdToken, (req, res) => {
 
 // Facebook routes
 // Create a new account via Facebook
-router.post('/facebook/register', mw.decodeFirebaseIdToken, (req, res) => {
+router.get('/facebook/register', mw.decodeFirebaseIdToken, mw.validateOpenAccount, (req, res) => {
   const user = new Users({
     //body structure for created user
-    email: req.body.email,
+    email: res.locals.user.email,
     //password is automatically generated to fulfill model requirements
     //neither the developer or user knows the password as authentication will occur via token verification
     password: bcrypt.hashSync(generator.generate(passConfig), 12),
@@ -87,8 +87,8 @@ router.post('/facebook/register', mw.decodeFirebaseIdToken, (req, res) => {
 })
 
 // Login via Facebook
-router.post('/facebook/login', mw.decodeFirebaseIdToken, (req, res) => {
-  const { email } = req.body;
+router.get('/facebook/login', mw.decodeFirebaseIdToken, mw.validateExistingAccount, (req, res) => {
+  const { email } = res.locals.user;
 
   Users
   //Query to search for a user where the emails match
