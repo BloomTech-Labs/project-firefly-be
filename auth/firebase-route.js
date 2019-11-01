@@ -43,7 +43,7 @@ router.get('/firebase/register', mw.decodeFirebaseIdToken, mw.validateOpenAccoun
 
 router.get('/firebase/login', mw.decodeFirebaseIdToken, mw.validateExistingAccount, (req, res) => {
   const { email } = res.locals.user;
-  console.log(res.locals.user)
+  
   Users
   //Query to search for a user where the emails match
   .findOne({ email: email })
