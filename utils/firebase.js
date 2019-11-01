@@ -7,6 +7,6 @@ const serviceAccount = require("./firebase-service-account.json");
 
 // Export Firebase initilization
 module.exports = firebase.initializeApp({
-  credentials: firebase.credential.cert(serviceAccount),
+  credentials: firebase.credential.applicationDefault(),
   databaseURL: process.env.FIREBASE_DATABASE_URL
 });
