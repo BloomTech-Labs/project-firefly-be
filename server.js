@@ -2,21 +2,22 @@
 const express = require('express');
 const session = require('cookie-session');
 const mongoose = require('mongoose');
-const helmet = require('helmet')
-const cors = require('cors')
+const helmet = require('helmet');
+const cors = require('cors');
 require('dotenv/config');
 
 const server = express();
 
-//import routes
+// import routes
 const usersRoute = require('./routes/users-routes');
 const childrenRoute = require('./routes/children-routes');
 const fireflyRoute = require('./routes/firefly-routes');
 const stripeRoute = require('./routes/stripe-routes');
 const authRoute = require('./auth/auth-routes');
+const firebaseRoute = require('./auth/firebase-route');
 
 // setting up mongoose 
-mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false })
+mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
 // setup session configurations
 const sessionConfig ={
@@ -34,7 +35,7 @@ const sessionConfig ={
   },
   resave: false, //do not recreate the sessions, if all else constant, resign-in should still be done
   saveUninitialized: false, //has to be dynamic, should only be true if the user has accepted the terms of using the cookies
-}
+};
 
 // middleware instantiation
 server.use(express.json()); 
@@ -50,7 +51,7 @@ server.use('/children', childrenRoute);
 server.use('/fireflies', fireflyRoute);
 server.use('/stripe', stripeRoute);
 server.use('/auth', authRoute);
-
+server.use('/auth', firebaseRoute);
 
 module.exports = server; 
 
