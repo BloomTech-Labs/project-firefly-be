@@ -132,7 +132,7 @@ router.post('/v1/subscriptions', mw.checkStripeCustomerId, (req, res) => {
 })
 
 // create a new charge 
-router.post('/stripe/api/stripe', /*mw.checkStripeChargeObj*/(req, res) => {
+router.post('/api/stripe', /*mw.checkStripeChargeObj*/(req, res) => {
     const { stripeToken } = req.body; 
 
     console.log('check')
