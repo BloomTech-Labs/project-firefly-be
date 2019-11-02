@@ -132,9 +132,10 @@ router.post('/v1/subscriptions', mw.checkStripeCustomerId, (req, res) => {
 })
 
 // create a new charge 
-router.post('/api/stripe', mw.checkStripeChargeObj, (req, res) => {
+router.post('/stripe/api/stripe', /*mw.checkStripeChargeObj*/(req, res) => {
     const { stripeToken } = req.body; 
 
+    console.log('check')
     stripe.charges.create({
         amount: 4.99,
         currency: 'usd', 

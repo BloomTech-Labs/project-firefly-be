@@ -1,5 +1,5 @@
 //Import supertest, Mongo Client, and mongoose for test use
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 const request = require('supertest');
 //Import the secrets
 require('dotenv').config();
@@ -19,9 +19,9 @@ describe('server', () => {
     db = await connection.db();
   });
   //clean the database before running the test and disconnect when done with the testing
-  beforeAll(async () => { await db.collection('users').deleteMany({}) });
-  beforeAll(async () => { await db.collection('childrens').deleteMany({}) });
-  beforeAll(async () => { await db.collection('fireflies').deleteMany({}) });
+  beforeAll(async () => { await db.collection('Users').deleteMany({}) });
+  beforeAll(async () => { await db.collection('Children').deleteMany({}) });
+  beforeAll(async () => { await db.collection('Fireflies').deleteMany({}) });
   afterAll(async () => { await connection.close() });
 
   //Check if the server.js file imported properly
