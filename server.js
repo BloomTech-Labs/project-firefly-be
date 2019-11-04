@@ -42,7 +42,9 @@ server.use(express.json());
 server.use(session(sessionConfig));
 server.use(helmet()); 
 server.use(cors({
-	origin: '*'
+  origin: '*',
+  // allows headers to be read
+  credentials: true
 }));
 
 // route handling
