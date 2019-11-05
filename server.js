@@ -23,13 +23,12 @@ mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: t
 
 // middleware instantiation
 server.use(express.json());
+server.use(helmet());
 server.use(cors({
   origin: '*',
   // allows headers to be read
   credentials: true
 }));
-server.use(session(sessionConfig));
-server.use(helmet());
 
 
 // route handling
