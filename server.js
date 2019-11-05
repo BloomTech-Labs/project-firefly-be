@@ -27,7 +27,7 @@ const sessionConfig = {
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     //httpOnly prevents any type of non server side access, like someone injecting a script
-    httpOnly: false,
+    httpOnly: true,
     //sends a duplicate of the key with an encrypted value to reference to check and make sure the key has not been tampered with since being sent/created
     signed: true,
     //if a new key is made with the same name/value as a current one it will simply replace it
