@@ -7,7 +7,7 @@ module.exports = (user) => {
   // Create the payload and options
   const payload = {
     subject: user.id,
-    username: user.username,
+    email: user.email,
   };
   const options = {
     expiresIn: '8h',

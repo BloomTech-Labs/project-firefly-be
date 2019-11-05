@@ -48,7 +48,7 @@ router.post('/login', mw.checkUserObj, (req, res) => {
       // Create a token
       const token = generateToken(user)
 
-      res.status(200).json( 'Welcome' );
+      res.status(200).json({ message: 'Welcome', token });
     }
     else {
       error( 'Wrong Information', 401, res )
