@@ -7,6 +7,7 @@ const Users = require('../models/users')
 
 //Import middleware
 const mw = require('../middleware/users-middleware')
+const generateToken = require('./generateToken')
 
 //Set error msgs
 const error = (msg, sts, res) => {
@@ -44,9 +45,9 @@ router.post('/login', mw.checkUserObj, (req, res) => {
   .then(user => {
     //If the password matches after going through the hash continue
     if (user && bcrypt.compareSync(password, user.password)) {
-      req.session.user = user 
-      req.session.loggedIn = true 
-      //Creating the session name and setting logged in <-- cookie injection :)
+      // Create a token
+      const token = generateToken(user)
+
       res.status(200).json( 'Welcome' );
     }
     else {
@@ -66,16 +67,6 @@ router.get('/logout', (req, res) => {
     req.session.destroy
     //End the response to close
     res.send('Otsukare Sama Desu!')
-    // req.session.destroy( err => {
-    //   //If the logout fails to occur, send a message notifying the user to reattempt
-    //   if(err) { 
-    //     res.send('Sumimasen, Chotto Matte!')
-    //   }
-    //   //Otherwise notify the user that they have been successfully logged out
-    //   else {
-    //     res.send('Otsukare Sama Desu!')
-    //   }
-    // })
   }
   //If a session doesn't exist notify the user to login
   else {
