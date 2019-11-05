@@ -1,6 +1,6 @@
 //Start a router and import bcrypt
 const router = require('express').Router();
-const bcrypt = require('bcryptjs') //bcryptjs is better for us to use because it is available in more places than bcrypt which is native to C++
+const bcrypt = require('bcryptjs') // Bcryptjs is better for us to use because it is available in more places than bcrypt which is native to C++
 
 //Import database
 const Users = require('../models/users')
@@ -21,7 +21,7 @@ router.post('/register', mw.checkUserObj, mw.validateUniqueEmail, ( req, res ) =
   // Encrypt the password with a hash and set the user's password to the hash
   const hash = bcrypt.hashSync(user.password, 12);
   user.password = hash;
-  //Call the collection and save the new user's information with the password swapped for the hash
+  // Call the collection and save the new user's information with the password swapped for the hash
   const newUser = new Users(user)
 
   newUser
@@ -44,8 +44,9 @@ router.post('/login', mw.checkUserObj, (req, res) => {
   .then(user => {
     //If the password matches after going through the hash continue
     if (user && bcrypt.compareSync(password, user.password)) {
-      req.session.user = user
-      //Creating the session name <-- cookie injection :)
+      req.session.user = user 
+      req.session.loggedIn = true 
+      //Creating the session name and setting logged in <-- cookie injection :)
       res.status(200).json( 'Welcome' );
     }
     else {

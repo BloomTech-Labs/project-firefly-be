@@ -1,6 +1,6 @@
 // library imports
 const express = require('express');
-const session = require('cookie-session');
+const session = require('express-session');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 // const cors = require('cors');
@@ -63,4 +63,3 @@ server.use('/auth', authRoute);
 server.use('/auth', firebaseRoute);
 
 module.exports = server;
-
