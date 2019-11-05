@@ -20,14 +20,14 @@ const firebaseRoute = require('./auth/firebase-route');
 mongoose.connect(process.env.URL, { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
 // setup session configurations
-const sessionConfig ={
+const sessionConfig = {
   name: 'Question', //keep em guessing
   secret: process.env.SECRET, // the magical words
   cookie: {
     // Cookie Options
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     //httpOnly prevents any type of non server side access, like someone injecting a script
-    httpOnly: true,
+    httpOnly: false,
     //sends a duplicate of the key with an encrypted value to reference to check and make sure the key has not been tampered with since being sent/created
     signed: true,
     //if a new key is made with the same name/value as a current one it will simply replace it
@@ -38,9 +38,9 @@ const sessionConfig ={
 };
 
 // middleware instantiation
-server.use(express.json()); 
+server.use(express.json());
 server.use(session(sessionConfig));
-server.use(helmet()); 
+server.use(helmet());
 server.use(cors({
   origin: '*',
   // allows headers to be read
@@ -55,5 +55,5 @@ server.use('/stripe', stripeRoute);
 server.use('/auth', authRoute);
 server.use('/auth', firebaseRoute);
 
-module.exports = server; 
+module.exports = server;
 
