@@ -63,7 +63,7 @@ router.get('/logout', (req, res) => {
   //Check for a current session in progress and then end it with a destroy method
   if(req.session) { 
     //Destroy session by setting it to null
-    req.session = null
+    req.session.destroy
     //End the response to close
     res.send('Otsukare Sama Desu!')
     // req.session.destroy( err => {

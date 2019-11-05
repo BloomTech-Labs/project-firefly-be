@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-// const cors = require('cors');
+const cors = require('cors');
 require('dotenv/config');
 
 const server = express();
@@ -39,19 +39,19 @@ const sessionConfig = {
 
 // middleware instantiation
 server.use(express.json());
-server.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", req.headers.origin); //req.headers.origin // '*'
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Set-Cookie");
-  res.header('Access-Control-Allow-Credentials', true)
-  next();
-}); 
+// server.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", req.headers.origin); //req.headers.origin // '*'
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Set-Cookie");
+//   res.header('Access-Control-Allow-Credentials', true)
+//   next();
+// }); 
+server.use(cors({
+  origin: '*',
+  // allows headers to be read
+  credentials: true
+}));
 server.use(session(sessionConfig));
 server.use(helmet());
-// server.use(cors({
-//   origin: '*',
-//   // allows headers to be read
-//   credentials: true
-// }));
 
 
 // route handling
