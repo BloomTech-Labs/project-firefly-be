@@ -19,8 +19,11 @@ const stripeLoading = new stripeLoader(process.env.STRIPE_SECRET_KEY)
 
 // =============== Step 2 - Customer creation ================
 
+const MONTHLY_KEY = 'plan_G3My08N3nG7cuV';
+const YEARLY_KEY = 'plan_G3MzlRFTkeqi0c';
 // monthly subscription creation
-router.post('/customer/sub-monthly', (req, res) => {
+router.post('/customer/subscription', (req, res) => {
+    let plan = req.body.cycle === 'MONTHLY' ? MONTHLY_KEY : YEARLY_KEY;
     const { stripeToken, email } = req.body;
     console.log(req.body); 
     
@@ -37,7 +40,7 @@ router.post('/customer/sub-monthly', (req, res) => {
                 customer: customer.id,
                 items: [
                     {
-                        plan: 'plan_G3My08N3nG7cuV'
+                        plan: plan
                     }
                 ]
             })
@@ -55,36 +58,36 @@ router.post('/customer/sub-monthly', (req, res) => {
 
 
 // yearly subscription creation
-router.post('/customer/sub-yearly', (req, res) => {
-    const { stripeToken, email } = req.body;
-    console.log(req.body); 
-    stripe.customers.create({
-        email: email,
-        source: stripeToken.id // aka payment method
-    }, function(err, customer) {
-        if(err) {
-            // console.log(err)
-            res.status(501); 
-        } else {
-            // console.log(customer); 
-            stripe.subscriptions.create({
-                customer: customer.id,
-                items: [
-                    {
-                        plan: 'plan_G3MzlRFTkeqi0c'
-                    }
-                ]
-            })
-                .then(sub => {
-                    res.status(201).json({ message: `Success!`, sub})
-                })
-                .catch(err => {
-                    // console.log(err) 
-                    res.status(500).json({ message: `Something went wrong...`, err})
-                })
-        }
-    })
-})
+// router.post('/customer/sub-yearly', (req, res) => {
+//     const { stripeToken, email } = req.body;
+//     console.log(req.body);
+//     stripe.customers.create({
+//         email: email,
+//         source: stripeToken.id // aka payment method
+//     }, function(err, customer) {
+//         if(err) {
+//             // console.log(err)
+//             res.status(501);
+//         } else {
+//             // console.log(customer);
+//             stripe.subscriptions.create({
+//                 customer: customer.id,
+//                 items: [
+//                     {
+//                         plan: 'plan_G3MzlRFTkeqi0c'
+//                     }
+//                 ]
+//             })
+//                 .then(sub => {
+//                     res.status(201).json({ message: `Success!`, sub})
+//                 })
+//                 .catch(err => {
+//                     // console.log(err)
+//                     res.status(500).json({ message: `Something went wrong...`, err})
+//                 })
+//         }
+//     })
+// })
 
 
 
