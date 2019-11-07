@@ -8,6 +8,9 @@ if (process.env.NODE_ENV !== 'production') {
 // library imports
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
+// middleware
+const mw = require('../middleware/stripe-middleware');
+
 /*
 =========3 STEPS TO STRIPE===========
 1. Create products and plans (this is done in the stripe dashboard)
@@ -20,10 +23,16 @@ const stripeLoading = new stripeLoader(process.env.STRIPE_SECRET_KEY)
 // =============== Step 2 - Customer creation ================
 
 // monthly subscription creation
+<<<<<<< HEAD
 router.post('/customer/sub-monthly', (req, res) => {
     const { stripeToken, email } = req.body;
     console.log(req.body); 
     
+=======
+router.post('/customer/sub-monthly', mw.checkStripeObj, (req, res) => {
+    const { stripeEmail, stripeToken } = req.body;
+
+>>>>>>> origin
     stripe.customers.create({
         email: email,
         source: stripeToken.id // aka payment method
@@ -55,9 +64,15 @@ router.post('/customer/sub-monthly', (req, res) => {
 
 
 // yearly subscription creation
+<<<<<<< HEAD
 router.post('/customer/sub-yearly', (req, res) => {
     const { stripeToken, email } = req.body;
     console.log(req.body); 
+=======
+router.post('/customer/sub-yearly', mw.checkStripeObj, (req, res) => {
+    const { stripeEmail, stripeToken } = req.body;
+
+>>>>>>> origin
     stripe.customers.create({
         email: email,
         source: stripeToken.id // aka payment method
@@ -118,7 +133,7 @@ router.get('/v1/subscriptions', (req, res) => {
 // ========================= POST requests ===========================
 
 // create a subscription
-router.post('/v1/subscriptions', (req, res) => {
+router.post('/v1/subscriptions', mw.checkStripeCustomerId, (req, res) => {
     const { id } = req.body; 
 
     stripe.subscriptions.create({
@@ -134,6 +149,7 @@ router.post('/v1/subscriptions', (req, res) => {
 })
 
 // create a new charge 
+<<<<<<< HEAD
 router.post('/api/stripe', async (req, res) => {
     try {
         const token = req.body; 
@@ -162,12 +178,33 @@ router.post('/api/stripe', async (req, res) => {
         // res.status(500); 
     }
 
+=======
+router.post('/api/stripe', /*mw.checkStripeChargeObj*/(req, res) => {
+    const { stripeToken } = req.body; 
+
+    console.log('check')
+    stripe.charges.create({
+        amount: 4.99,
+        currency: 'usd', 
+        description: 'monthly subscription charge for Project Firefly',
+        source: stripeToken
+    }, function(err, charge) {
+        if (err) {
+            res.status(401).json({
+                success: false,
+                error: err
+            })
+        } else {
+            res.status(201).json({ message: `Success!`, charge})
+        }
+    })
+>>>>>>> origin
 })
 
 // ======================== PUT requests ============================
 
 // update a subscription by user identifier 
-router.put('/v1/subscriptions/:id', (req, res) => {
+router.put('/v1/subscriptions/:id', mw.checkStripeOrderId, (req, res) => {
     const { id } = req.params; 
     const { orderId } = req.body; 
 
