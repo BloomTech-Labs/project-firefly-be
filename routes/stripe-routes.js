@@ -1,5 +1,5 @@
 const router = require('express').Router();
-
+const stripeLoader = require('stripe'); 
 // conditional env variable rendering
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv')
@@ -15,22 +15,26 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 3. Subscribe the customer to the plan (aka. create subscription with correct user ID)
 */
 
-
+const stripeLoading = new stripeLoader(process.env.STRIPE_SECRET_KEY)
 
 // =============== Step 2 - Customer creation ================
 
 // monthly subscription creation
 router.post('/customer/sub-monthly', (req, res) => {
-    const { stripeEmail, stripeToken } = req.body;
-
+    const { stripeToken, email } = req.body;
+    console.log(req.body); 
+    
     stripe.customers.create({
-        email: stripeEmail,
-        source: stripeToken // aka payment method
-    })
-        .then(cust => {
-            console.log(cust); 
+        email: email,
+        source: stripeToken.id // aka payment method
+    }, function(err, customer) {
+        if(err) {
+            // console.log(err)
+            res.status(501); 
+        } else {
+            // console.log(customer); 
             stripe.subscriptions.create({
-                customer: cust.id,
+                customer: customer.id,
                 items: [
                     {
                         plan: 'plan_G3My08N3nG7cuV'
@@ -41,28 +45,30 @@ router.post('/customer/sub-monthly', (req, res) => {
                     res.status(201).json({ message: `Success!`, sub})
                 })
                 .catch(err => {
+                    // console.log(err) 
                     res.status(500).json({ message: `Something went wrong...`, err})
                 })
-        })
-        .catch(err => {
-            res.status(500).json({ message: `${err}` })
-        })
+        }
+    })
 })
 
 
 
 // yearly subscription creation
 router.post('/customer/sub-yearly', (req, res) => {
-    const { stripeEmail, stripeToken } = req.body;
-
+    const { stripeToken, email } = req.body;
+    console.log(req.body); 
     stripe.customers.create({
-        email: stripeEmail,
-        source: stripeToken // aka payment method
-    })
-        .then(cust => {
-            console.log(cust);
+        email: email,
+        source: stripeToken.id // aka payment method
+    }, function(err, customer) {
+        if(err) {
+            // console.log(err)
+            res.status(501); 
+        } else {
+            // console.log(customer); 
             stripe.subscriptions.create({
-                customer: cust.id,
+                customer: customer.id,
                 items: [
                     {
                         plan: 'plan_G3MzlRFTkeqi0c'
@@ -73,12 +79,11 @@ router.post('/customer/sub-yearly', (req, res) => {
                     res.status(201).json({ message: `Success!`, sub})
                 })
                 .catch(err => {
+                    // console.log(err) 
                     res.status(500).json({ message: `Something went wrong...`, err})
                 })
-        })
-        .catch(err => {
-            res.status(500).json({ message: `${err}` })
-        })
+        }
+    })
 })
 
 
@@ -120,7 +125,7 @@ router.post('/v1/subscriptions', (req, res) => {
         customer: id, // customer identifier from request body
         items: [ //
             {
-                plan: "gold", // items.plan is required!
+                plan: "montly", // items.plan is required!
             },
         ]
     }, function(err, subscription) {const router = require('express').Router();
@@ -129,24 +134,34 @@ router.post('/v1/subscriptions', (req, res) => {
 })
 
 // create a new charge 
-router.post('/api/stripe', (req, res) => {
-    const { stripeToken } = req.body; 
+router.post('/api/stripe', async (req, res) => {
+    try {
+        const token = req.body; 
+        // console.log(req); 
+        await stripe.charges.create({ 
+            amount: 4.99 * 100,
+            currency: 'usd', 
+            description: 'monthly subscription charge for Project Firefly',
+            source: token.id
 
-    stripe.charges.create({
-        amount: 4.99,
-        currency: 'usd', 
-        description: 'monthly subscription charge for Project Firefly',
-        source: stripeToken
-    }, function(err, charge) {
-        if (err) {
-            res.status(401).json({
-                success: false,
-                error: err
-            })
-        } else {
-            res.status(201).json({ message: `Success!`, charge})
-        }
-    })
+        }, function(err, charge) {
+            if (err) {
+                console.log(charge); 
+                res.status(401).json({
+                    success: false,
+                    error: err
+                })
+            } else {
+                res.status(201).json({ message: `Success!`, charge})
+            }
+        })
+    } catch(err) {
+        // console.log(token); 
+        // console.log(err); 
+        throw err; 
+        // res.status(500); 
+    }
+
 })
 
 // ======================== PUT requests ============================
