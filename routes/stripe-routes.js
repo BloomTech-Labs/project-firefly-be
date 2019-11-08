@@ -22,23 +22,21 @@ const stripeLoading = new stripeLoader(process.env.STRIPE_SECRET_KEY)
 
 // =============== Step 2 - Customer creation ================
 
+const MONTHLY_KEY = 'plan_G3My08N3nG7cuV';
+const YEARLY_KEY = 'plan_G3MzlRFTkeqi0c';
 // monthly subscription creation
-<<<<<<< HEAD
-router.post('/customer/sub-monthly', (req, res) => {
-    const { stripeToken, email } = req.body;
-    console.log(req.body); 
-    
-=======
-router.post('/customer/sub-monthly', mw.checkStripeObj, (req, res) => {
-    const { stripeEmail, stripeToken } = req.body;
 
->>>>>>> origin
+    
+router.post('/customer/subscription', (req, res) => {
+    let plan = req.body.cycle === 'MONTHLY' ? MONTHLY_KEY : YEARLY_KEY;
+    const { stripeToken, email } = req.body;
+
     stripe.customers.create({
         email: email,
         source: stripeToken.id // aka payment method
     }, function(err, customer) {
         if(err) {
-            // console.log(err)
+            console.log(err)
             res.status(501); 
         } else {
             // console.log(customer); 
@@ -46,7 +44,7 @@ router.post('/customer/sub-monthly', mw.checkStripeObj, (req, res) => {
                 customer: customer.id,
                 items: [
                     {
-                        plan: 'plan_G3My08N3nG7cuV'
+                        plan: plan
                     }
                 ]
             })
@@ -64,42 +62,69 @@ router.post('/customer/sub-monthly', mw.checkStripeObj, (req, res) => {
 
 
 // yearly subscription creation
-<<<<<<< HEAD
-router.post('/customer/sub-yearly', (req, res) => {
-    const { stripeToken, email } = req.body;
-    console.log(req.body); 
-=======
-router.post('/customer/sub-yearly', mw.checkStripeObj, (req, res) => {
-    const { stripeEmail, stripeToken } = req.body;
 
->>>>>>> origin
-    stripe.customers.create({
-        email: email,
-        source: stripeToken.id // aka payment method
-    }, function(err, customer) {
-        if(err) {
-            // console.log(err)
-            res.status(501); 
-        } else {
-            // console.log(customer); 
-            stripe.subscriptions.create({
-                customer: customer.id,
-                items: [
-                    {
-                        plan: 'plan_G3MzlRFTkeqi0c'
-                    }
-                ]
-            })
-                .then(sub => {
-                    res.status(201).json({ message: `Success!`, sub})
-                })
-                .catch(err => {
-                    // console.log(err) 
-                    res.status(500).json({ message: `Something went wrong...`, err})
-                })
-        }
-    })
-})
+// router.post('/customer/sub-yearly', (req, res) => {
+//     const { stripeToken, email } = req.body;
+//     console.log(req.body); 
+
+//     stripe.customers.create({
+//         email: email,
+//         source: stripeToken.id // aka payment method
+//     }, function(err, customer) {
+//         if(err) {
+//             // console.log(err)
+//             res.status(501); 
+//         } else {
+//             // console.log(customer); 
+//             stripe.subscriptions.create({
+//                 customer: customer.id,
+//                 items: [
+//                     {
+//                         plan: 'plan_G3MzlRFTkeqi0c'
+//                     }
+//                 ]
+//             })
+//                 .then(sub => {
+//                     res.status(201).json({ message: `Success!`, sub})
+//                 })
+//                 .catch(err => {
+//                     // console.log(err) 
+//                     res.status(500).json({ message: `Something went wrong...`, err})
+//                 })
+//         }
+//     })
+// })
+
+// router.post('/customer/sub-yearly', (req, res) => {
+//     const { stripeToken, email } = req.body;
+//     console.log(req.body);
+//     stripe.customers.create({
+//         email: email,
+//         source: stripeToken.id // aka payment method
+//     }, function(err, customer) {
+//         if(err) {
+//             // console.log(err)
+//             res.status(501);
+//         } else {
+//             // console.log(customer);
+//             stripe.subscriptions.create({
+//                 customer: customer.id,
+//                 items: [
+//                     {
+//                         plan: 'plan_G3MzlRFTkeqi0c'
+//                     }
+//                 ]
+//             })
+//                 .then(sub => {
+//                     res.status(201).json({ message: `Success!`, sub})
+//                 })
+//                 .catch(err => {
+//                     // console.log(err)
+//                     res.status(500).json({ message: `Something went wrong...`, err})
+//                 })
+//         }
+//     })
+// })
 
 
 
@@ -149,36 +174,6 @@ router.post('/v1/subscriptions', mw.checkStripeCustomerId, (req, res) => {
 })
 
 // create a new charge 
-<<<<<<< HEAD
-router.post('/api/stripe', async (req, res) => {
-    try {
-        const token = req.body; 
-        // console.log(req); 
-        await stripe.charges.create({ 
-            amount: 4.99 * 100,
-            currency: 'usd', 
-            description: 'monthly subscription charge for Project Firefly',
-            source: token.id
-
-        }, function(err, charge) {
-            if (err) {
-                console.log(charge); 
-                res.status(401).json({
-                    success: false,
-                    error: err
-                })
-            } else {
-                res.status(201).json({ message: `Success!`, charge})
-            }
-        })
-    } catch(err) {
-        // console.log(token); 
-        // console.log(err); 
-        throw err; 
-        // res.status(500); 
-    }
-
-=======
 router.post('/api/stripe', /*mw.checkStripeChargeObj*/(req, res) => {
     const { stripeToken } = req.body; 
 
@@ -198,7 +193,6 @@ router.post('/api/stripe', /*mw.checkStripeChargeObj*/(req, res) => {
             res.status(201).json({ message: `Success!`, charge})
         }
     })
->>>>>>> origin
 })
 
 // ======================== PUT requests ============================
