@@ -35,7 +35,7 @@ server.use(cors({
 server.use('/users', usersRoute);
 server.use('/children', authenticate, childrenRoute);
 server.use('/fireflies', authenticate, fireflyRoute);
-server.use('/stripe', authenticate, stripeRoute);
+server.use('/stripe', stripeRoute);
 server.use('/auth', authRoute);
 server.use('/auth', firebaseRoute);
 
