@@ -27,8 +27,10 @@ router.post('/register', mw.checkUserObj, mw.validateUniqueEmail, ( req, res ) =
 
   newUser
   .save()
-  .then(saved => {
-    res.status(201).json(saved);
+  .then(user => {
+    const token = generateToken(user)
+
+    res.status(200).json({ message: 'Welcome', token });
   })
   .catch( err => {
     error( err, 500, res );

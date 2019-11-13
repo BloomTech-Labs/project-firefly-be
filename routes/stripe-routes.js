@@ -11,31 +11,25 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // middleware
 const mw = require('../middleware/stripe-middleware');
 
-/*
-=========3 STEPS TO STRIPE===========
-1. Create products and plans (this is done in the stripe dashboard)
-2. Create a customer (isn't needed for a 1 time charge)
-3. Subscribe the customer to the plan (aka. create subscription with correct user ID)
-*/
-
 const stripeLoading = new stripeLoader(process.env.STRIPE_SECRET_KEY)
 
-// =============== Step 2 - Customer creation ================
+// =============== Creating subscriptions ================
 
 const MONTHLY_KEY = 'plan_G3My08N3nG7cuV';
 const YEARLY_KEY = 'plan_G3MzlRFTkeqi0c';
 // monthly subscription creation
+
+    
 router.post('/customer/subscription', (req, res) => {
     let plan = req.body.cycle === 'MONTHLY' ? MONTHLY_KEY : YEARLY_KEY;
     const { stripeToken, email } = req.body;
-    console.log(req.body); 
-    
+
     stripe.customers.create({
         email: email,
         source: stripeToken.id // aka payment method
     }, function(err, customer) {
         if(err) {
-            // console.log(err)
+            console.log(err)
             res.status(501); 
         } else {
             // console.log(customer); 
@@ -58,72 +52,6 @@ router.post('/customer/subscription', (req, res) => {
     })
 })
 
-
-
-// yearly subscription creation
-router.post('/customer/sub-yearly', mw.checkStripeObj, (req, res) => {
-    const { stripeEmail, stripeToken } = req.body;
-
-    stripe.customers.create({
-        email: stripeEmail,
-        source: stripeToken // aka payment method
-    })
-        .then(cust => {
-            console.log(cust);
-            stripe.subscriptions.create({
-                customer: cust.id,
-                items: [
-                    {
-                        plan: 'plan_G3MzlRFTkeqi0c'
-                    }
-                ]
-            })
-                .then(sub => {
-                    res.status(201).json({ message: `Success!`, sub})
-                })
-                .catch(err => {
-                    res.status(500).json({ message: `Something went wrong...`, err})
-                })
-        })
-        .catch(err => {
-            res.status(500).json({ message: `${err}` })
-        })
-})
-// router.post('/customer/sub-yearly', (req, res) => {
-//     const { stripeToken, email } = req.body;
-//     console.log(req.body);
-//     stripe.customers.create({
-//         email: email,
-//         source: stripeToken.id // aka payment method
-//     }, function(err, customer) {
-//         if(err) {
-//             // console.log(err)
-//             res.status(501);
-//         } else {
-//             // console.log(customer);
-//             stripe.subscriptions.create({
-//                 customer: customer.id,
-//                 items: [
-//                     {
-//                         plan: 'plan_G3MzlRFTkeqi0c'
-//                     }
-//                 ]
-//             })
-//                 .then(sub => {
-//                     res.status(201).json({ message: `Success!`, sub})
-//                 })
-//                 .catch(err => {
-//                     // console.log(err)
-//                     res.status(500).json({ message: `Something went wrong...`, err})
-//                 })
-//         }
-//     })
-// })
-
-
-
-
-// Route handling
 
 // ========================= GET requests ===========================
 
@@ -165,37 +93,6 @@ router.post('/v1/subscriptions', mw.checkStripeCustomerId, (req, res) => {
     }, function(err, subscription) {const router = require('express').Router();
         // asynchronously called (I think this is where we do our status messages/error handling)
     })
-})
-
-// create a new charge 
-router.post('/api/stripe', async (req, res) => {
-    try {
-        const token = req.body; 
-        // console.log(req); 
-        await stripe.charges.create({ 
-            amount: 4.99 * 100,
-            currency: 'usd', 
-            description: 'monthly subscription charge for Project Firefly',
-            source: token.id
-
-        }, function(err, charge) {
-            if (err) {
-                console.log(charge); 
-                res.status(401).json({
-                    success: false,
-                    error: err
-                })
-            } else {
-                res.status(201).json({ message: `Success!`, charge})
-            }
-        })
-    } catch(err) {
-        // console.log(token); 
-        // console.log(err); 
-        throw err; 
-        // res.status(500); 
-    }
-
 })
 
 // ======================== PUT requests ============================
