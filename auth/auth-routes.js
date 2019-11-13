@@ -30,7 +30,7 @@ router.post('/register', mw.checkUserObj, mw.validateUniqueEmail, ( req, res ) =
   .then(user => {
     const token = generateToken(user)
 
-    res.status(200).json({ message: 'Welcome', token });
+    res.status(200).json({ message: 'Welcome', user, token });
   })
   .catch( err => {
     error( err, 500, res );
@@ -50,7 +50,7 @@ router.post('/login', mw.checkUserObj, (req, res) => {
       // Create a token
       const token = generateToken(user)
 
-      res.status(200).json({ message: 'Welcome', token });
+      res.status(200).json({ message: 'Welcome', user, token });
     }
     else {
       error( 'Wrong Information', 401, res )
